@@ -1,7 +1,7 @@
 #include "TextTable.h"
 #include <iomanip>
 
-TextTable::TextTable(const char horizontal = '-', const char vertical = '|', const char corner = '+')
+TextTable::TextTable(const char horizontal, const char vertical, const char corner)
 	: m_horizontal{ horizontal }, m_vertical{ vertical }, m_corner{ corner }
 {}
 

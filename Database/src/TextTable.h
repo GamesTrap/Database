@@ -16,6 +16,7 @@ public:
 
 	void setup() const;
 	void add(std::string const &content);
+	void clear();
 	std::string ruler() const;
 	std::vector<row> const &rows() const;
 	void endOfRow();

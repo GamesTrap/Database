@@ -26,4 +26,5 @@ private:
 	bool checkId(int &id) const;
 
 	std::vector<Record> m_records;
+	TextTable m_table;
 };

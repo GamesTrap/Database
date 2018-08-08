@@ -16,6 +16,13 @@ void TextTable::add(std::string const &content)
 	m_current.push_back(content);
 }
 
+void TextTable::clear()
+{
+	m_width.clear();
+	m_rows.clear();
+	m_current.clear();
+}
+
 std::string TextTable::ruler() const
 {
 	std::string result;

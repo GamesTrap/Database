@@ -25,18 +25,19 @@ void Database::showAllRecords()
 {
 	std::cout << '\n' << "Number of Records: " << getAllRecords() << '\n' << '\n';
 
-	TextTable table('-', '|', '+');
-	table.add("ID");
-	table.add("Firstname");
-	table.add("Lastname");
-	table.endOfRow();
+	m_table.clear();
+
+	m_table.add("ID");
+	m_table.add("Firstname");
+	m_table.add("Lastname");
+	m_table.endOfRow();
 
 	for(const auto& i : m_records)
 	{
-		addRecordToTable(i, table);
+		addRecordToTable(i, m_table);
 	}
 
-	std::cout << table << '\n';
+	std::cout << m_table << '\n';
 }
 
 void Database::displayMenu()
@@ -87,7 +88,6 @@ void Database::displayMenu()
 
 void Database::addRecordToTable(const Record &record, TextTable& table)
 {
-	//std::cout << "ID: " << record.m_id << " Firstname: " << record.m_firstname << " Lastname: " << record.m_lastname << '\n' << '\n';
 	table.add(std::to_string(record.m_id));
 	table.add(record.m_firstname);
 	table.add(record.m_lastname);
@@ -167,20 +167,39 @@ std::string Database::getNameById(const int id, const bool firstname)
 
 void Database::checkName(std::string &name) const
 {
+	bool wrong = false; //Default Correct Input
+
 	do
-	{
-		for(auto& i : name)
+	{	
+		if(name.empty())
+			wrong = true; //Wrong Input
+		else if (name.at(0) == ' ')
+			wrong = true; //Wrong Input
+		else if (name.at(name.size() - 1) == ' ')
+			wrong = true; //Wront Input
+		else
 		{
-			if(!(std::isalpha(i) || (std::isspace(i) && name.find_first_of(' '))))
+			for (auto& i : name)
 			{
-				std::cout << "Wrong Input!" << '\n' << "Please try again: ";
-				std::cin.clear();
-				std::getline(std::cin, name);
+				if (!std::isalpha(i) || std::isdigit(i))
+					wrong = std::isspace(i) == 0; //Default Wrong Input except if i is ' '
+				else if(std::isalpha(i))
+					//Correct input
+					wrong = false;
+
+				if (wrong)
+					break; //Wrong Input
 			}
-			else //Correct input
-				return;
 		}
-	} while (true);
+
+		if (wrong) //Handle Wrong Input
+		{
+			std::cout << '\n' << "Wrong Input!" << '\n' << "Please try again: ";
+			std::cin.clear();
+			std::getline(std::cin, name);
+		}
+
+	} while (wrong);
 }
 
 bool Database::checkId(int &id) const

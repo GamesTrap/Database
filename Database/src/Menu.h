@@ -9,6 +9,10 @@ public:
 
 	void displayMenu();
 
+
 private:
+	static void clearScreen();
+	static void continueScreen();
+
 	Database m_database;
 };

@@ -19,6 +19,8 @@ void Menu::displayMenu()
 
 	while (true)
 	{
+		clearScreen();
+
 		std::cout << "1 - Add Record" << '\n'
 			<< "2 - Show Record by ID" << '\n'
 			<< "3 - Show all Records" << '\n'
@@ -38,13 +40,18 @@ void Menu::displayMenu()
 		switch (menu)
 		{
 		case 1: //Add
+			clearScreen();
 			m_database.addRecord();
 			break;
 		case 2: //ShowByID
+			clearScreen();
 			m_database.showRecordById();
+			continueScreen();
 			break;
 		case 3: //ShowAll
+			clearScreen();
 			m_database.showAllRecords();
+			continueScreen();
 			break;
 		case 4:
 			std::cout << '\n' << "Press any key to continue . . . ";
@@ -56,4 +63,15 @@ void Menu::displayMenu()
 				<< "Please try again" << '\n' << '\n';
 		}
 	}
+}
+
+void Menu::clearScreen()
+{
+	std::cout << std::string(100, '\n');
+}
+
+void Menu::continueScreen()
+{
+	std::cout << "Press any key to continue . . . ";
+	std::cin.get();
 }

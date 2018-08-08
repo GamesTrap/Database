@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cctype>
 #include <string>
-#include "Menu.h"
 
 void Database::addRecord()
 {	
@@ -24,10 +23,6 @@ void Database::showRecordById()
 	addRecordToTableById(id);
 
 	std::cout << '\n' << m_table << '\n';
-
-	/*std::cout << '\n' << "ID: " << id << '\n'
-	          << "Firstname: " <<  getNameById(id, true) << '\n' 
-	          << "Lastname: " << getNameById(id, false) << '\n' << '\n';*/
 }
 
 void Database::showAllRecords()
@@ -70,7 +65,7 @@ std::size_t Database::getNextId() const
 	return id;
 }
 
-std::size_t Database::getId()
+std::size_t Database::getId() const
 {
 	std::string idStr;
 	std::size_t id;

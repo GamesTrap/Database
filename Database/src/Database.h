@@ -18,7 +18,7 @@ public:
 
 private:
 	std::size_t getNextId() const;
-	std::size_t getId();
+	std::size_t getId() const;
 	std::size_t getAllRecords() const;
 	std::string getName(bool firstname) const;
 	std::string getNameById(std::size_t id, bool firstname);

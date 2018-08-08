@@ -8,6 +8,8 @@ set( DATABASE_SOURCES
 	src/Record.cpp
 	src/TextTable.h
 	src/TextTable.cpp
+	src/Menu.h
+	src/Menu.cpp
 )
 
 add_executable(${PROJECT_NAME} ${DATABASE_SOURCES})

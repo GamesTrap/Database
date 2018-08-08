@@ -171,7 +171,7 @@ void Database::checkName(std::string &name) const
 	{
 		for(auto& i : name)
 		{
-			if(!(std::isalpha(i) || std::isspace(i) && name.find_first_of(' ')))
+			if(!(std::isalpha(i) || (std::isspace(i) && name.find_first_of(' '))))
 			{
 				std::cout << "Wrong Input!" << '\n' << "Please try again: ";
 				std::cin.clear();

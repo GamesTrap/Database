@@ -8,16 +8,4 @@ set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
 set(CMAKE_CXX_EXTENSIONS FALSE)
 
-project(Database)
-
-set( DATABASE_SOURCES
-	Database/src/main.cpp
-	Database/src/Database.h
-	Database/src/Database.cpp
-	Database/src/Record.h
-	Database/src/Record.cpp
-	Database/src/TextTable.h
-	Database/src/TextTable.cpp
-)
-
-add_executable(${PROJECT_NAME} ${DATABASE_SOURCES})
+add_subdirectory(Database)

@@ -11,7 +11,7 @@ public:
 
 	typedef std::vector<std::string> row;
 
-	TextTable(char horizontal, char vertical, char corner);
+	explicit TextTable(const char horizontal = '-', const char vertical = '|', const char corner = '+');
 
 	void setup() const;
 	void add(std::string const &content);

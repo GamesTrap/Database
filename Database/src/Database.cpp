@@ -21,6 +21,24 @@ void Database::showRecordById()
 	          << "Lastname: " << getNameById(id, false) << '\n' << '\n';
 }
 
+void Database::showAllRecords()
+{
+	std::cout << '\n' << "Number of Records: " << getAllRecords() << '\n' << '\n';
+
+	TextTable table('-', '|', '+');
+	table.add("ID");
+	table.add("Firstname");
+	table.add("Lastname");
+	table.endOfRow();
+
+	for(const auto& i : m_records)
+	{
+		addRecordToTable(i, table);
+	}
+
+	std::cout << table << '\n';
+}
+
 void Database::displayMenu()
 {
 	int menu;
@@ -28,9 +46,10 @@ void Database::displayMenu()
 
 	while(true)
 	{
-	    std::cout << "1 - Add Record" << '\n'
-		          << "2 - Show Record by ID" << '\n'
-		          << "3 - Quit" << '\n'
+		std::cout << "1 - Add Record" << '\n'
+			      << "2 - Show Record by ID" << '\n'
+			      << "3 - Show all Records" << '\n'
+		          << "4 - Quit" << '\n'
 		          << "Enter a number and press return: ";
 
 		std::getline(std::cin, menuStr);
@@ -46,12 +65,15 @@ void Database::displayMenu()
 		switch(menu)
 		{
 		case 1: //Add
-			this->addRecord();
+			addRecord();
 			break;
 		case 2:
-			this->showRecordById();
+			showRecordById();
 			break;
 		case 3:
+			showAllRecords();
+			break;
+		case 4:
 			std::cout << '\n' << "Press any key to continue . . . ";
 			std::cin.get();
 			exit(0);
@@ -63,9 +85,18 @@ void Database::displayMenu()
 	}
 }
 
+void Database::addRecordToTable(const Record &record, TextTable& table)
+{
+	//std::cout << "ID: " << record.m_id << " Firstname: " << record.m_firstname << " Lastname: " << record.m_lastname << '\n' << '\n';
+	table.add(std::to_string(record.m_id));
+	table.add(record.m_firstname);
+	table.add(record.m_lastname);
+	table.endOfRow();
+}
+
 int Database::getNextId() const
 {
-	const int id = m_records.size();
+	const auto id = static_cast<unsigned int>(m_records.size());
 	std::cout << '\n' << "Database ID: " << id << '\n';
 
 	return id;
@@ -93,6 +124,11 @@ int Database::getId()
 	}
 
 	return id;
+}
+
+std::size_t Database::getAllRecords() const
+{
+	return m_records.size();
 }
 
 std::string Database::getName(const bool firstname) const

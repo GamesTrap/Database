@@ -161,7 +161,10 @@ void DatabaseInterface::validateName(std::string& name) const
 			for (auto& i : name)
 			{
 				if (!std::isalpha(i) || std::isdigit(i))
-					isCorrect = !std::isspace(i) == 0; //Default Wrong Input except if i is ' '
+					//isCorrect = !std::isspace(i) == 0; //Default Wrong Input except if i is ' '
+				{
+					isCorrect = std::isspace(i) != 0;
+				}
 				else if (std::isalpha(i))
 					//Correct input
 					isCorrect = true;

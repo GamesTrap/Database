@@ -9,16 +9,15 @@ class TextTable
 public:
 	enum class Alignment { LEFT, RIGHT };
 
-	typedef std::vector<std::string> row;
-
+	typedef std::vector<std::string> Row;
 
 	explicit TextTable(char horizontal = '-', char vertical = '|', char corner = '+');
 
-	void setup() const;
+	void setupTextTable() const;
 	void add(std::string const &content);
-	void clear();
+	void clearTextTable();
 	std::string ruler() const;
-	std::vector<row> const &rows() const;
+	std::vector<Row> const &rows() const;
 	void endOfRow();
 	char vertical() const;
 	Alignment alignment(std::size_t i) const;
@@ -29,10 +28,10 @@ private:
 	char m_vertical;
 	char m_corner;
 
-	row m_current;
+	Row m_current;
 
 	std::vector<unsigned int> mutable m_width;
-	std::vector<row> m_rows;
+	std::vector<Row> m_rows;
 
 	std::map<std::size_t, Alignment > mutable m_alignment;
 

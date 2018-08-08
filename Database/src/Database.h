@@ -7,14 +7,14 @@
 class Database
 {
 public:
-	void addRecord();
 	void showRecordById();
 	void showAllRecords();
 
-
-
+	void addRecord();
 	void addRecordToTableById(std::size_t id);
 	void addRecordToTable(Record &record);
+
+	bool getRecordAndTable(TextTable &table);
 
 private:
 	std::size_t getNextId() const;

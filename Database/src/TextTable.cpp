@@ -5,7 +5,7 @@ TextTable::TextTable(const char horizontal, const char vertical, const char corn
 	: m_horizontal{ horizontal }, m_vertical{ vertical }, m_corner{ corner }
 {}
 
-void TextTable::setup() const
+void TextTable::setupTextTable() const
 {
 	determineWidths();
 	setupAlignment();
@@ -16,7 +16,7 @@ void TextTable::add(std::string const &content)
 	m_current.push_back(content);
 }
 
-void TextTable::clear()
+void TextTable::clearTextTable()
 {
 	m_width.clear();
 	m_rows.clear();
@@ -36,7 +36,7 @@ std::string TextTable::ruler() const
 	return result;
 }
 
-std::vector<TextTable::row> const& TextTable::rows() const
+std::vector<TextTable::Row> const& TextTable::rows() const
 {
 	return m_rows;
 }
@@ -101,7 +101,7 @@ std::string TextTable::repeat(std::size_t times, const char c)
 
 std::ostream& operator<<(std::ostream& stream, TextTable const& table)
 {
-	table.setup();
+	table.setupTextTable();
 	stream << table.ruler() << '\n';
 	for (auto rowIterator = table.rows().begin(); rowIterator != table.rows().end(); ++rowIterator)
 	{

@@ -4,27 +4,20 @@
 #include <cctype>
 #include <string>
 
-void Database::addRecord()
-{	
-	const int id = getNextId();
-	const std::string firstname = getName(true);
-	const std::string lastname = getName(false);
-
-	m_records.emplace_back(id, firstname, lastname);
-}
-
 void Database::showRecordById()
 {
 	const std::size_t id = getId();
 	if (id == -1)
+	{
+		std::cout << '\n';
 		return;
+	}
 
 	initTable();
 	addRecordToTableById(id);
 
 	std::cout << '\n' << m_table << '\n';
 }
-
 void Database::showAllRecords()
 {
 	std::cout << '\n' << "Number of Records: " << getAllRecords() << '\n' << '\n';
@@ -39,8 +32,14 @@ void Database::showAllRecords()
 	std::cout << m_table << '\n';
 }
 
+void Database::addRecord()
+{
+	const int id = getNextId();
+	const std::string firstname = getName(true);
+	const std::string lastname = getName(false);
 
-
+	m_records.emplace_back(id, firstname, lastname);
+}
 void Database::addRecordToTableById(const std::size_t id)
 {
 	m_table.add(std::to_string(m_records.at(id).m_id));
@@ -48,13 +47,28 @@ void Database::addRecordToTableById(const std::size_t id)
 	m_table.add(m_records.at(id).m_lastname);
 	m_table.endOfRow();
 }
-
 void Database::addRecordToTable(Record& record)
 {
 	m_table.add(std::to_string(record.m_id));
 	m_table.add(record.m_firstname);
 	m_table.add(record.m_lastname);
 	m_table.endOfRow();
+}
+
+bool Database::getRecordAndTable(TextTable &table)
+{
+	const std::size_t id = getId();
+	if (id == -1)
+	{
+		std::cout << '\n';
+		return false;
+	}
+
+	initTable();
+	addRecordToTableById(id);
+
+	table = m_table;
+	return true;
 }
 
 std::size_t Database::getNextId() const
@@ -64,7 +78,6 @@ std::size_t Database::getNextId() const
 
 	return id;
 }
-
 std::size_t Database::getId() const
 {
 	std::string idStr;
@@ -85,12 +98,10 @@ std::size_t Database::getId() const
 
 	return id;
 }
-
 std::size_t Database::getAllRecords() const
 {
 	return m_records.size();
 }
-
 std::string Database::getName(const bool firstname) const
 {
 	std::string name;
@@ -116,7 +127,6 @@ std::string Database::getName(const bool firstname) const
 
 	return name;
 }
-
 std::string Database::getNameById(const std::size_t id, const bool firstname)
 {
 	if (firstname)
@@ -124,7 +134,6 @@ std::string Database::getNameById(const std::size_t id, const bool firstname)
 	else
 		return m_records.at(id).m_lastname;
 }
-
 Record Database::getRecord(std::size_t id)
 {
 	if (!checkId(id))
@@ -169,7 +178,6 @@ void Database::checkName(std::string &name) const
 
 	} while (wrong);
 }
-
 bool Database::checkId(std::size_t &id) const
 {
 	std::string temp;
@@ -177,7 +185,7 @@ bool Database::checkId(std::size_t &id) const
 	while (m_records.size() <= id)
 	{
 		std::cout << '\n' << "Invalid input." << '\n'
-			      << "Please try again or Press 'x' to exit: ";
+			      << "Please try again or press 'x' to cancel: ";
 		std::getline(std::cin, temp);
 
 		if (temp == "x" || temp == "X")
@@ -195,7 +203,7 @@ bool Database::checkId(std::size_t &id) const
 
 void Database::initTable()
 {
-	m_table.clear();
+	m_table.clearTextTable();
 
 	m_table.add("ID");
 	m_table.add("Firstname");

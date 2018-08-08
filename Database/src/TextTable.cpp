@@ -45,12 +45,12 @@ char TextTable::vertical() const
 	return m_vertical;
 }
 
-TextTable::Alignment TextTable::alignment(const unsigned int i) const
+TextTable::Alignment TextTable::alignment(const std::size_t i) const
 {
 	return m_alignment.at(i);
 }
 
-int TextTable::width(const unsigned int i) const
+int TextTable::width(const std::size_t i) const
 {
 	return m_width.at(i);
 }
@@ -62,7 +62,7 @@ void TextTable::determineWidths() const
 	{
 		for (std::size_t i = 0; i < row.size(); ++i) 
 		{
-			m_width.at(i) = m_width.at(i) > row.at(i).size() ? m_width.at(i) : row.at(i).size();
+			m_width.at(i) = static_cast<unsigned int>(m_width.at(i) > row.at(i).size() ? m_width.at(i) : row.at(i).size());
 		}
 	}
 }
@@ -72,13 +72,13 @@ std::size_t TextTable::columns() const
 	return m_rows.at(0).size();
 }
 
-void TextTable::setupAlignment() const //////////////////////////////////
+void TextTable::setupAlignment() const
 {
 	for (std::size_t i = 0; i < columns(); ++i) 
 	{
-		if (m_alignment.find(i) == m_alignment.end()) 
+		if (m_alignment.find(static_cast<unsigned int>(i)) == m_alignment.end()) 
 		{
-			m_alignment[i] = Alignment::LEFT;
+			m_alignment[static_cast<unsigned int>(i)] = Alignment::LEFT;
 		}
 	}
 }

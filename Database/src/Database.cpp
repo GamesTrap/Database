@@ -94,7 +94,7 @@ void Database::addRecordToTable(const Record &record, TextTable& table)
 	table.endOfRow();
 }
 
-int Database::getNextId() const
+unsigned int Database::getNextId() const
 {
 	const auto id = static_cast<unsigned int>(m_records.size());
 	std::cout << '\n' << "Database ID: " << id << '\n';
@@ -102,7 +102,7 @@ int Database::getNextId() const
 	return id;
 }
 
-int Database::getId()
+unsigned int Database::getId()
 {
 	std::string idStr;
 	int id;

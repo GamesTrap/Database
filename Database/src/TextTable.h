@@ -11,7 +11,8 @@ public:
 
 	typedef std::vector<std::string> row;
 
-	explicit TextTable(const char horizontal = '-', const char vertical = '|', const char corner = '+');
+
+	explicit TextTable(char horizontal = '-', char vertical = '|', char corner = '+');
 
 	void setup() const;
 	void add(std::string const &content);
@@ -19,8 +20,8 @@ public:
 	std::vector<row> const &rows() const;
 	void endOfRow();
 	char vertical() const;
-	Alignment alignment(unsigned int i) const;
-	int width(unsigned int i) const;
+	Alignment alignment(std::size_t i) const;
+	int width(std::size_t i) const;
 
 private:
 	char m_horizontal;
@@ -32,7 +33,7 @@ private:
 	std::vector<unsigned int> mutable m_width;
 	std::vector<row> m_rows;
 
-	std::map<unsigned int, Alignment > mutable m_alignment;
+	std::map<std::size_t, Alignment > mutable m_alignment;
 
 	void determineWidths() const;
 	void setupAlignment() const;

@@ -16,8 +16,8 @@ public:
 	static void addRecordToTable(const Record &record, TextTable& table);
 
 private:
-	int getNextId() const;
-	int getId();
+	unsigned int getNextId() const;
+	unsigned int getId();
 	std::size_t  getAllRecords() const;
 	std::string getName(bool firstname) const;
 	std::string getNameById(int id, bool firstname);

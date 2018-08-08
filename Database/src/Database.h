@@ -11,7 +11,7 @@ public:
 	void showRecordById();
 	void showAllRecords();
 
-	void displayMenu();
+
 
 	void addRecordToTableById(std::size_t id);
 	void addRecordToTable(Record &record);

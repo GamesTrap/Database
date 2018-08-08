@@ -1,10 +1,12 @@
 #include <iostream>
-#include "Database.h"
+
+#include "Menu.h"
 
 int main()
 {
-	Database database;
-	database.displayMenu();
+	//Database database;
+	//database.displayMenu();
+	Menu menu;
 
 	std::cout << "Press any key to continue . . . ";
 	//std::cin.ignore(1000, '\n');

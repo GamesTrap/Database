@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <cctype>
+#include <string>
+#include "Menu.h"
 
 void Database::addRecord()
 {	
@@ -15,6 +17,8 @@ void Database::addRecord()
 void Database::showRecordById()
 {
 	const std::size_t id = getId();
+	if (id == -1)
+		return;
 
 	initTable();
 	addRecordToTableById(id);
@@ -40,51 +44,7 @@ void Database::showAllRecords()
 	std::cout << m_table << '\n';
 }
 
-void Database::displayMenu()
-{
-	int menu;
-	std::string menuStr;
 
-	while(true)
-	{
-		std::cout << "1 - Add Record" << '\n'
-			      << "2 - Show Record by ID" << '\n'
-			      << "3 - Show all Records" << '\n'
-		          << "4 - Quit" << '\n'
-		          << "Enter a number and press return: ";
-
-		std::getline(std::cin, menuStr);
-		try
-		{
-			menu = std::stoi(menuStr);
-		}
-		catch(...)
-		{
-			menu = -1;
-		}
-
-		switch(menu)
-		{
-		case 1: //Add
-			addRecord();
-			break;
-		case 2:
-			showRecordById();
-			break;
-		case 3:
-			showAllRecords();
-			break;
-		case 4:
-			std::cout << '\n' << "Press any key to continue . . . ";
-			std::cin.get();
-			exit(0);
-
-		default:
-			std::cout << '\n' << "Invalid input." << '\n'
-				      << "Please try again" << '\n' << '\n';
-		}
-	}
-}
 
 void Database::addRecordToTableById(const std::size_t id)
 {
@@ -126,10 +86,7 @@ std::size_t Database::getId()
 	}
 
 	if (!checkId(id))
-	{
-		std::cout << '\n';
-		displayMenu();
-	}
+		id = -1;
 
 	return id;
 }
@@ -176,10 +133,7 @@ std::string Database::getNameById(const std::size_t id, const bool firstname)
 Record Database::getRecord(std::size_t id)
 {
 	if (!checkId(id))
-	{
-		std::cout << '\n';
-		displayMenu();
-	}
+		id = -1;
 
 	return m_records.at(id);
 }

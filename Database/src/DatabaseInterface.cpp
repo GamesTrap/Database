@@ -2,14 +2,10 @@
 #include "DatabaseInterface.h"
 #include <cctype>
 
-DatabaseInterface::DatabaseInterface()
-{
-	displayMenu();
-}
+DatabaseInterface::DatabaseInterface() { displayMenu(); }
 
 void DatabaseInterface::displayMenu()
 {
-	int menu;
 	std::string menuStr;
 
 	while (true)
@@ -17,50 +13,43 @@ void DatabaseInterface::displayMenu()
 		clearScreen();
 
 		std::cout << "1 - Add Record" << '\n'
-			      << "2 - Show Record by ID" << '\n'
-			      << "3 - Show all Records" << '\n'
-		          << "4 - Update Record by ID" << '\n'
-			      << "5 - Quit" << '\n'
-			      << "Enter a number and press enter: ";
+				<< "2 - Show Record(s)" << '\n'
+				<< "3 - Update Record" << '\n'
+				<< "4 - Settings" << '\n'
+				<< "5 - Quit" << '\n'
+				<< "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
 		if (menuStr.length() > 1)
-			menu = -1;
-		else
-		{
-			try
-			{
-				menu = std::stoi(menuStr);
-			}
-			catch (...)
-			{
-				menu = -1;
-			}
-		}		
+			menuStr = 'y';
+		else if (menuStr.empty())
+			menuStr = 'y';
 
-		switch (menu)
+		switch (menuStr.at(0))
 		{
-		case 1: //Add
+		case '1':
 			addRecordFromUser();
 			break;
-		case 2: //Show single Record
-			showRecordByIndexFromUser();
+		case '2':
+			displayShowMenu();
 			break;
-		case 3: //Show all Records
-			showAllRecords();
-			break;
-		case 4: //Update single Record
+		case '3':
 			displayUpdateMenu();
 			break;
-		case 5: //Close Database
-		{
-			const bool close = confirmScreen();
-			if (close)
-				exit(0);
+		case '4':
+			displaySettingsMenu();
 			break;
-		}
+		case 'x':
+			[[fallthrough]];
+		case '5':
+			{
+				const bool close = confirmScreen();
+				if (close)
+					exit(0);
+				break;
+			}
 
-		default: 
+		default:
 			;
 		}
 	}
@@ -68,7 +57,6 @@ void DatabaseInterface::displayMenu()
 
 void DatabaseInterface::displayUpdateMenu()
 {
-	int menu;
 	std::string menuStr;
 
 	clearScreen();
@@ -84,29 +72,104 @@ void DatabaseInterface::displayUpdateMenu()
 
 		std::cout << '\n' << m_table << '\n';
 
-		std::cout << "1 - Change ID" << '\n'
-			      << "2 - Change Firstname" << '\n'
-			      << "3 - Change Lastname" << '\n'
-		          << "4 - Delete Record" << '\n'
-		          << "5 - Go back to main menu" << '\n'
-			      << "Enter a number and press enter: ";
+		std::cout << "1 - Change Firstname" << '\n'
+				<< "2 - Change Lastname" << '\n'
+				<< "3 - Delete Record" << '\n'
+				<< "4 - Main Menu" << '\n'
+				<< "Enter a number and press enter: ";
+
+		std::getline(std::cin, menuStr);
+		if (menuStr.length() > 1)
+			menuStr = 'y';
+		else if (menuStr.empty())
+			menuStr = 'y';
+
+		switch (menuStr.at(0))
+		{
+		case '1':
+			updateFirstname(index);
+			break;
+		case '2':
+			updateLastname(index);
+			break;
+		case '3':
+			removeRecordFromUser(index);
+			break;
+		case 'x':
+			[[fallthrough]];
+		case '4':
+			return;
+
+		default:
+			;
+		}
+	}
+}
+
+void DatabaseInterface::displayShowMenu()
+{
+	std::string menuStr;
+
+	while (true)
+	{
+		clearScreen();
+
+		std::cout << "1 - All" << '\n'
+				<< "2 - By ID" << '\n'
+				<< "3 - Main Menu" << '\n'
+				<< "Enter a number and press enter: ";
+
+		std::getline(std::cin, menuStr);
+		if (menuStr.length() > 1)
+			menuStr = 'y';
+		else if (menuStr.empty())
+			menuStr = 'y';
+
+		switch (menuStr.at(0))
+		{
+		case '1':
+			showAllRecords();
+			break;
+		case '2':
+			showRecordByIndexFromUser();
+			break;
+		case 'x':
+			[[fallthrough]];
+		case '3':
+			return;
+
+		default:
+			;
+		}
+	}
+}
+
+void DatabaseInterface::displaySettingsMenu() const
+{
+	int menu;
+	std::string menuStr;
+
+	while (true)
+	{
+		clearScreen();
+
+		std::cout << "1 - Export" << '\n'
+				<< "2 - Import" << '\n'
+				<< "3 - Main Menu" << '\n'
+				<< "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
 		if (menuStr.length() > 1)
 			menu = -1;
+		else if (menuStr == "x" || menuStr == "X")
+			return;
 		else
 		{
-			try
-			{
-				menu = std::stoi(menuStr);
-			}
-			catch (...)
-			{
-				menu = -1;
-			}
+			try { menu = std::stoi(menuStr); }
+			catch (...) { menu = -1; }
 		}
 
-		switch(menu)
+		switch (menu)
 		{
 		case 1:
 
@@ -115,12 +178,6 @@ void DatabaseInterface::displayUpdateMenu()
 
 			break;
 		case 3:
-
-			break;
-		case 4:
-			removeRecordFromUser(index);
-			break;
-		case 5:
 			return;
 
 		default:
@@ -133,7 +190,7 @@ void DatabaseInterface::addRecordFromUser()
 {
 	clearScreen();
 
-	int id = getNextId();
+	const int id = getNextId();
 
 	std::cout << "Database ID: " << id << '\n' << '\n';
 
@@ -146,14 +203,15 @@ void DatabaseInterface::addRecordFromUser()
 
 	addRecord(id, firstname, lastname);
 }
+
 void DatabaseInterface::removeRecordFromUser(const int index)
 {
 	if (!confirmScreen())
 		return;
 
-	clearScreen();	
+	clearScreen();
 
-	if(index == -1)
+	if (index == -1)
 	{
 		std::cout << '\n';
 		return;
@@ -167,6 +225,7 @@ void DatabaseInterface::removeRecordFromUser(const int index)
 
 	displayMenu();
 }
+
 void DatabaseInterface::showRecordByIndexFromUser()
 {
 	clearScreen();
@@ -174,7 +233,7 @@ void DatabaseInterface::showRecordByIndexFromUser()
 	std::cout << "Please enter a Database ID: ";
 	const int index = getIndexFromUser();
 
-	if(index == -1)
+	if (index == -1)
 	{
 		std::cout << '\n';
 		return;
@@ -192,11 +251,12 @@ void DatabaseInterface::showRecordByIndexFromUser()
 
 	continueScreen();
 }
+
 void DatabaseInterface::showAllRecords()
 {
 	clearScreen();
 
-	const std::size_t recordsSize = getRecordsSize();
+	const std::size_t recordsSize = getNextId();
 
 	if (recordsSize == 0)
 	{
@@ -210,14 +270,35 @@ void DatabaseInterface::showAllRecords()
 	clearTable();
 	initializeTable();
 
-	for(std::size_t i = 0; i < recordsSize; i++)
-	{
-		addRecordToTableByIndex(i);
-	}
+	for (unsigned int i = 0; i < recordsSize; i++) { addRecordToTableByIndex(i); }
 
 	std::cout << '\n' << m_table << '\n';
 
 	continueScreen();
+}
+
+void DatabaseInterface::updateFirstname(const int index)
+{
+	clearScreen();
+
+	std::cout << m_table << '\n';
+
+	std::cout << "Please enter firstname: ";
+	const std::string firstname{getNameFromUser()};
+
+	setFirstname(index, firstname);
+}
+
+void DatabaseInterface::updateLastname(const int index)
+{
+	clearScreen();
+
+	std::cout << m_table << '\n';
+
+	std::cout << "Please enter lastname: ";
+	const std::string lastname{getNameFromUser()};
+
+	setLastname(index, lastname);
 }
 
 std::string DatabaseInterface::getNameFromUser() const
@@ -231,6 +312,7 @@ std::string DatabaseInterface::getNameFromUser() const
 
 	return temp;
 }
+
 int DatabaseInterface::getIndexFromUser() const
 {
 	std::string idStr;
@@ -241,14 +323,8 @@ int DatabaseInterface::getIndexFromUser() const
 		index = -1;
 	else
 	{
-		try
-		{
-			index = std::stoi(idStr);
-		}
-		catch (...)
-		{
-			index = -1;
-		}
+		try { index = std::stoi(idStr); }
+		catch (...) { index = -1; }
 	}
 
 	validateIndex(index);
@@ -258,7 +334,7 @@ int DatabaseInterface::getIndexFromUser() const
 
 bool DatabaseInterface::getTableWithRecord(TextTable& table, const int index)
 {
-	if(index == -1)
+	if (index == -1)
 	{
 		std::cout << '\n';
 		return false;
@@ -304,18 +380,18 @@ void DatabaseInterface::validateName(std::string& name) const
 			std::cin.clear();
 			std::getline(std::cin, name);
 		}
-
-	} while (!isCorrect);
+	}
+	while (!isCorrect);
 }
 
 void DatabaseInterface::validateIndex(int& index) const
 {
 	std::string temp;
 
-	while(!checkRecordIndex(index))
+	while (!checkRecordIndex(index))
 	{
 		std::cout << '\n' << "Invalid Input." << '\n'
-			<< "Please try again or press 'x' to cancel: ";
+				<< "Please try again or press 'x' to cancel: ";
 		std::getline(std::cin, temp);
 
 		if (temp == "x" || temp == "X")
@@ -324,13 +400,8 @@ void DatabaseInterface::validateIndex(int& index) const
 			break;
 		}
 
-		try
-		{
-			index = std::stoi(temp);
-		}
-		catch (...)
-		{
-		}
+		try { index = std::stoi(temp); }
+		catch (...) { }
 	}
 }
 
@@ -341,17 +412,17 @@ void DatabaseInterface::initializeTable()
 	m_table.add("Lastname");
 	m_table.endOfRow();
 }
-void DatabaseInterface::clearTable()
-{
-	m_table.clearTextTable();
-}
-void DatabaseInterface::addRecordToTableByRecord(Record &record)
+
+void DatabaseInterface::clearTable() { m_table.clearTextTable(); }
+
+void DatabaseInterface::addRecordToTableByRecord(Record& record)
 {
 	m_table.add(std::to_string(record.ID));
 	m_table.add(record.Firstname);
 	m_table.add(record.Lastname);
 	m_table.endOfRow();
 }
+
 void DatabaseInterface::addRecordToTableByIndex(const unsigned int index)
 {
 	const auto temp = getRecordByIndex(index);
@@ -362,24 +433,24 @@ void DatabaseInterface::addRecordToTableByIndex(const unsigned int index)
 	m_table.endOfRow();
 }
 
-void DatabaseInterface::clearScreen()
-{
-	std::cout << std::string(100, '\n');
-}
+void DatabaseInterface::clearScreen() { std::cout << std::string(100, '\n'); }
+
 void DatabaseInterface::continueScreen()
 {
 	std::cout << "Press Enter to continue . . . ";
 	std::cin.get();
 }
+
 bool DatabaseInterface::confirmScreen() const
 {
 	std::string confirm;
-	while(true)
-	{		
-	    std::cout << '\n' << "Are you sure (yes/no): ";
+	while (true)
+	{
+		std::cout << '\n' << "Are you sure (yes/no): ";
 		std::getline(std::cin, confirm);
 
 		//returns true if confirm == yes or YES or y or Y else returns false
-		return (!confirm.empty() && confirm == "yes") || (!confirm.empty() && confirm == "YES") || (!confirm.empty() && confirm == "y") || (!confirm.empty() && confirm == "Y");
+		return (!confirm.empty() && confirm == "yes") || (!confirm.empty() && confirm == "YES") || (!confirm.empty() &&
+			confirm == "y") || (!confirm.empty() && confirm == "Y");
 	}
 }

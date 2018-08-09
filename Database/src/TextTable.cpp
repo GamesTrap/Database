@@ -3,13 +3,9 @@
 
 //Public:
 TextTable::TextTable(const char horizontal, const char vertical, const char corner)
-	: m_horizontal{ horizontal }, m_vertical{ vertical }, m_corner{ corner }
-{}
+	: m_horizontal{horizontal}, m_vertical{vertical}, m_corner{corner} {}
 
-void TextTable::add(std::string const &content)
-{
-	m_current.push_back(content);
-}
+void TextTable::add(std::string const& content) { m_current.push_back(content); }
 
 void TextTable::clearTextTable()
 {
@@ -38,34 +34,24 @@ std::string TextTable::getRuler() const
 	return result;
 }
 
-std::vector<std::vector<std::string>> const& TextTable::getRows() const
-{
-	return m_rows;
-}
+std::vector<std::vector<std::string>> const& TextTable::getRows() const { return m_rows; }
 
-char TextTable::getVerticalChar() const
-{
-	return m_vertical;
-}
+char TextTable::getVerticalChar() const { return m_vertical; }
 
-int TextTable::getWidth(const std::size_t i) const
-{
-	return m_width.at(i);
-}
+int TextTable::getWidth(const std::size_t i) const { return m_width.at(i); }
 
-std::size_t TextTable::getColumns() const
-{
-	return m_rows.at(0).size();
-}
+std::size_t TextTable::getColumns() const { return m_rows.at(0).size(); }
 
 void TextTable::determineWidths() const
 {
 	m_width.assign(getColumns(), 0);
 	for (const auto& row : m_rows)
 	{
-		for (std::size_t i = 0; i < row.size(); ++i) 
+		for (std::size_t i = 0; i < row.size(); ++i)
 		{
-			m_width.at(i) = static_cast<unsigned int>(m_width.at(i) > row.at(i).size() ? m_width.at(i) : row.at(i).size());
+			m_width.at(i) = static_cast<unsigned int>(m_width.at(i) > row.at(i).size()
+				                                          ? m_width.at(i)
+				                                          : row.at(i).size());
 		}
 	}
 }
@@ -86,9 +72,9 @@ std::ostream& operator<<(std::ostream& stream, TextTable const& table)
 	stream << table.getRuler() << '\n';
 	for (auto rowIterator = table.getRows().begin(); rowIterator != table.getRows().end(); ++rowIterator)
 	{
-		auto const & row = *rowIterator;
+		auto const& row = *rowIterator;
 		stream << table.getVerticalChar();
-		for (std::size_t i = 0; i < row.size(); ++i) 
+		for (std::size_t i = 0; i < row.size(); ++i)
 		{
 			const auto alignment = std::left;
 			stream << std::setw(table.getWidth(i)) << alignment << row.at(i);

@@ -8,15 +8,15 @@ class TextTable
 public:
 	explicit TextTable(char horizontal = '-', char vertical = '|', char corner = '+');
 
-	void add(std::string const &content);
+	void add(std::string const& content);
 	void clearTextTable();
 	void endOfRow();
 
-    friend std::ostream& operator<<(std::ostream &stream, TextTable const &table);
+	friend std::ostream& operator<<(std::ostream& stream, TextTable const& table);
 
 private:
 	std::string getRuler() const;
-	std::vector<std::vector<std::string>> const &getRows() const;
+	std::vector<std::vector<std::string>> const& getRows() const;
 	char getVerticalChar() const;
 	int getWidth(std::size_t i) const;
 	std::size_t getColumns() const;

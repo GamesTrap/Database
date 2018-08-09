@@ -5,13 +5,6 @@ void Database::addRecord(unsigned int id, std::string Firstname, std::string Las
 {
 	m_records.emplace_back(id, Firstname, Lastname);
 }
-bool Database::checkRecordIndex(const unsigned int index) const
-{
-	if (m_records.empty())
-		return false;
-
-	return getRecordsSize() > index;
-}
 
 bool Database::removeRecord(const unsigned int index)
 {
@@ -20,27 +13,33 @@ bool Database::removeRecord(const unsigned int index)
 
 	m_records.erase(m_records.begin() + index);
 
-	for(unsigned int i = index; i < getRecordsSize(); i++)
-	{
-		setId(i);
-	}
+	for (unsigned int i = index; i < getNextId(); i++) { setId(i); }
 
 	return true;
 }
 
-Record Database::getRecordByIndex(const unsigned int index)
+void Database::setFirstname(const unsigned int index, const std::string& Firstname)
 {
-	return Record(m_records.at(index));
-}
-unsigned int Database::getNextId() const
-{
-	return m_records.size();
-}
-unsigned int Database::getRecordsSize() const
-{
-	return m_records.size();
+	m_records.at(index).Firstname = Firstname;
 }
 
+void Database::setLastname(const unsigned int index, const std::string& Lastname)
+{
+	m_records.at(index).Lastname = Lastname;
+}
+
+Record Database::getRecordByIndex(const unsigned int index) { return Record(m_records.at(index)); }
+unsigned int Database::getNextId() const { return m_records.size(); }
+
+bool Database::checkRecordIndex(const unsigned int index) const
+{
+	if (m_records.empty())
+		return false;
+
+	return getNextId() > index;
+}
+
+//Private:
 std::string Database::getName(const unsigned int Index, const bool isFirstname)
 {
 	if (m_records.empty())
@@ -57,7 +56,4 @@ std::string Database::getName(const unsigned int Index, const bool isFirstname)
 	return "";
 }
 
-void Database::setId(const unsigned index)
-{
-	m_records.at(index).ID = index;
-}
+void Database::setId(const unsigned int index) { m_records.at(index).ID = index; }

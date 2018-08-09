@@ -12,27 +12,31 @@ public:
 	//Menus
 	void displayMenu();
 	void displayUpdateMenu();
-	
+	void displayShowMenu();
+	void displaySettingsMenu() const;
+
 private:
 	//Functions
 	void addRecordFromUser();
 	void removeRecordFromUser(int index);
 	void showRecordByIndexFromUser();
 	void showAllRecords();
+	void updateFirstname(int index);
+	void updateLastname(int index);
 
 	//Getters
 	std::string getNameFromUser() const;
 	int getIndexFromUser() const;
-	bool getTableWithRecord(TextTable &table, int index);
+	bool getTableWithRecord(TextTable& table, int index);
 
 	//Validators
 	void validateName(std::string& name) const;
-	void validateIndex(int &index) const;
+	void validateIndex(int& index) const;
 
 	//Table Functions
 	void initializeTable();
 	void clearTable();
-	void addRecordToTableByRecord(Record &record);
+	void addRecordToTableByRecord(Record& record);
 	void addRecordToTableByIndex(unsigned int index);
 
 	//Utility Functions

@@ -41,8 +41,7 @@ void DatabaseInterface::displayMenu()
 			break;
 		case 2: //ShowByID
 			clearScreen();
-			//showRecordById();
-			continueScreen();
+			showRecordByIndex();
 			break;
 		case 3: //ShowAll
 			clearScreen();
@@ -132,6 +131,25 @@ void DatabaseInterface::addRecord()
 	Database::addRecord(firstname, lastname);
 }
 
+void DatabaseInterface::showRecordByIndex()
+{
+	std::cout << "Please enter a Database ID: ";
+	const std::size_t index = getIndex();
+
+	if(index == -1)
+	{
+		std::cout << '\n';
+		return;
+	}
+
+	initTable();
+	addRecordToTableByIndex(index);
+
+	std::cout << '\n' << m_table << '\n';
+
+	continueScreen();
+}
+
 std::string DatabaseInterface::getName() const
 {
 	std::string temp;
@@ -142,6 +160,26 @@ std::string DatabaseInterface::getName() const
 	validateName(temp);
 
 	return temp;
+}
+std::size_t DatabaseInterface::getIndex() const
+{
+	std::string idStr;
+	std::size_t id;
+
+	std::getline(std::cin, idStr);
+
+	try
+	{
+		id = std::stoi(idStr);
+	}
+	catch (...)
+	{
+		id = -1;
+	}
+
+	validateIndex(id);
+
+	return id;
 }
 
 void DatabaseInterface::validateName(std::string& name) const
@@ -182,6 +220,48 @@ void DatabaseInterface::validateName(std::string& name) const
 		}
 
 	} while (!isCorrect);
+}
+void DatabaseInterface::validateIndex(std::size_t& index) const
+{
+	std::string temp;
+
+	while(getRecordsSize() < index + 1)
+	{
+		std::cout << '\n' << "Invalid Input." << '\n'
+			<< "Please try again or press 'x' to cancel: ";
+		std::getline(std::cin, temp);
+
+		if (temp == "x" || temp == "X")
+		{
+			index = -1;
+			break;
+		}
+
+		try
+		{
+			index = std::stoi(temp);
+		}
+		catch (...)
+		{
+		}
+	}
+}
+
+void DatabaseInterface::initTable()
+{
+	m_table.clearTextTable();
+
+	m_table.add("ID");
+	m_table.add("Firstname");
+	m_table.add("Lastname");
+	m_table.endOfRow();
+}
+void DatabaseInterface::addRecordToTableByIndex(const std::size_t index)
+{
+	m_table.add(std::to_string(index));
+	m_table.add(Database::getName(index, true));
+	m_table.add(Database::getName(index, false));
+	m_table.endOfRow();
 }
 
 void DatabaseInterface::clearScreen()

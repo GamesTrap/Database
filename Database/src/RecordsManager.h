@@ -6,25 +6,25 @@
 class RecordsManager
 {
 protected:	
-	//Adds a Record to m_records
-	void addRecord(const std::string& Firstname, const std::string& Lastname);
-
-
 	//Returns next ID for a new Record
 	std::size_t getNextId() const;
 
-private:
+	std::size_t getRecordsSize() const;
+
 	//Returns Index from a Record
 	std::size_t getIndex(std::size_t ID);
 	std::size_t getIndex(const std::string& Name, bool isFirstname);
 
-	//Returns ID from a Record
-	std::size_t getId(std::size_t Index);
-	std::size_t getId(const std::string& Name, bool isFirstname);
-
 	//Returns Name from a Record
 	std::string getName(std::size_t Index, bool isFirstname);
 	std::string getName(const std::string& Name, bool isFirstname);
+
+	void emplaceRecord(std::string Firstname, std::string Lastname);
+	
+private:	
+	//Returns ID from a Record
+	std::size_t getId(std::size_t Index);
+	std::size_t getId(const std::string& Name, bool isFirstname);
 
 
 	//Sets new ID or new Name

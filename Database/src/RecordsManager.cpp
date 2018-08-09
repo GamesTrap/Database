@@ -4,6 +4,14 @@ std::size_t RecordsManager::getNextId() const
 {
 	return m_records.size();
 }
+size_t RecordsManager::getRecordsSize() const
+{
+	return m_records.size();
+}
+void RecordsManager::emplaceRecord(std::string Firstname, std::string Lastname)
+{
+	m_records.emplace_back(getNextId(), Firstname, Lastname);
+}
 std::size_t RecordsManager::getIndex(const std::size_t ID)
 {
 	if(m_records.empty())
@@ -80,11 +88,6 @@ std::string RecordsManager::getName(const std::string& Name, const bool isFirstn
 		return m_records.at(index).Firstname;
 
 	return m_records.at(index).Lastname;
-}
-
-void RecordsManager::addRecord(const std::string& Firstname, const std::string& Lastname)
-{
-	m_records.emplace_back(getNextId(), Firstname, Lastname);
 }
 
 bool RecordsManager::removeRecordIndex(const std::size_t Index)

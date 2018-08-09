@@ -5,11 +5,7 @@
 
 class Database : public RecordsManager
 {
-public:
+protected:
 	//Adds a Record to m_records
 	void addRecord(const std::string& Firstname, const std::string& Lastname);
-
-private:
-
-	TextTable m_table;
 };

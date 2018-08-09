@@ -24,32 +24,33 @@ void DatabaseInterface::displayMenu()
 			      << "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
-		try
-		{
-			menu = std::stoi(menuStr);
-		}
-		catch (...)
-		{
+		if (menuStr.length() > 1)
 			menu = -1;
-		}
+		else
+		{
+			try
+			{
+				menu = std::stoi(menuStr);
+			}
+			catch (...)
+			{
+				menu = -1;
+			}
+		}		
 
 		switch (menu)
 		{
 		case 1: //Add
-			clearScreen();
-			addRecord();
+			addRecordFromUser();
 			break;
-		case 2: //ShowByID
-			clearScreen();
-			showRecordByIndex();
+		case 2: //Show single Record
+			showRecordByIndexFromUser();
 			break;
-		case 3: //ShowAll
-			clearScreen();
-			//showAllRecords();
-			continueScreen();
+		case 3: //Show all Records
+			showAllRecords();
 			break;
-		case 4: //UpdateRecordByID
-			//displayUpdateMenu();
+		case 4: //Update single Record
+			displayUpdateMenu();
 			break;
 		case 5: //Close Database
 		{
@@ -65,36 +66,40 @@ void DatabaseInterface::displayMenu()
 	}
 }
 
-/*void DatabaseInterface::displayUpdateMenu()
+void DatabaseInterface::displayUpdateMenu()
 {
 	int menu;
 	std::string menuStr;
-	TextTable table;
 
-	//save table to string or 
-	if(!getRecordAndTable(table))
+	if(!getTableWithRecord(m_table))
 		return;
 
 	while (true)
 	{
 		clearScreen();
 
-		std::cout << '\n' << table << '\n' << '\n';
+		std::cout << '\n' << m_table << '\n' << '\n';
 
 		std::cout << "1 - Change ID" << '\n'
 			      << "2 - Change Firstname" << '\n'
 			      << "3 - Change Lastname" << '\n'
-		          << "4 - Go back to main menu" << '\n'
+		          << "4 - Delete Record" << '\n'
+		          << "5 - Go back to main menu" << '\n'
 			      << "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
-		try
-		{
-			menu = std::stoi(menuStr);
-		}
-		catch(...)
-		{
+		if (menuStr.length() > 1)
 			menu = -1;
+		else
+		{
+			try
+			{
+				menu = std::stoi(menuStr);
+			}
+			catch (...)
+			{
+				menu = -1;
+			}
 		}
 
 		switch(menu)
@@ -109,32 +114,38 @@ void DatabaseInterface::displayMenu()
 
 			break;
 		case 4:
+
+			break;
+		case 5:
 			return;
 
 		default:
 			;
 		}
 	}
-}*/
+}
 
-void DatabaseInterface::addRecord()
+void DatabaseInterface::addRecordFromUser()
 {
+	clearScreen();
+
 	std::cout << "Database ID: " << getNextId() << '\n' << '\n';
 
 	std::cout << "Please enter firstname: ";
-	const std::string firstname = getName();
+	const std::string firstname = getNameFromUser();
 	std::cout << '\n';
 
 	std::cout << "Please enter lastname: ";
-	const std::string lastname = getName();
+	const std::string lastname = getNameFromUser();
 
-	Database::addRecord(firstname, lastname);
+	addRecord(firstname, lastname);
 }
-
-void DatabaseInterface::showRecordByIndex()
+void DatabaseInterface::showRecordByIndexFromUser()
 {
+	clearScreen();
+
 	std::cout << "Please enter a Database ID: ";
-	const std::size_t index = getIndex();
+	const int index = getIndexFromUser();
 
 	if(index == -1)
 	{
@@ -142,15 +153,47 @@ void DatabaseInterface::showRecordByIndex()
 		return;
 	}
 
-	initTable();
-	addRecordToTableByIndex(index);
+	clearScreen();
+
+	auto record = getRecordByIndex(index);
+
+	clearTable();
+	initializeTable();
+	addRecordToTableByRecord(record);
+
+	std::cout << '\n' << m_table << '\n';
+
+	continueScreen();
+}
+void DatabaseInterface::showAllRecords()
+{
+	clearScreen();
+
+	const std::size_t recordsSize = getRecordsSize();
+
+	if (recordsSize == 0)
+	{
+		std::cout << "Records: " << recordsSize << '\n' << '\n';
+		continueScreen();
+		return;
+	}
+
+	std::cout << "Records: " << recordsSize << '\n';
+
+	clearTable();
+	initializeTable();
+
+	for(std::size_t i = 0; i < recordsSize; i++)
+	{
+		addRecordToTableByIndex(i);
+	}
 
 	std::cout << '\n' << m_table << '\n';
 
 	continueScreen();
 }
 
-std::string DatabaseInterface::getName() const
+std::string DatabaseInterface::getNameFromUser() const
 {
 	std::string temp;
 
@@ -161,25 +204,48 @@ std::string DatabaseInterface::getName() const
 
 	return temp;
 }
-std::size_t DatabaseInterface::getIndex() const
+int DatabaseInterface::getIndexFromUser() const
 {
 	std::string idStr;
-	std::size_t id;
+	int index;
 
 	std::getline(std::cin, idStr);
-
-	try
+	if (idStr.length() > 1)
+		index = -1;
+	else
 	{
-		id = std::stoi(idStr);
+		try
+		{
+			index = std::stoi(idStr);
+		}
+		catch (...)
+		{
+			index = -1;
+		}
 	}
-	catch (...)
+
+	validateIndex(index);
+
+	return index;
+}
+
+bool DatabaseInterface::getTableWithRecord(TextTable& table)
+{
+	clearScreen();
+	std::cout << "Please enter a Database ID: ";
+	const int index = getIndexFromUser();
+
+	if(index == -1)
 	{
-		id = -1;
+		std::cout << '\n';
+		return false;
 	}
 
-	validateIndex(id);
+	clearTable();
+	initializeTable();
+	addRecordToTableByIndex(index);
 
-	return id;
+	return true;
 }
 
 void DatabaseInterface::validateName(std::string& name) const
@@ -199,10 +265,7 @@ void DatabaseInterface::validateName(std::string& name) const
 			for (auto& i : name)
 			{
 				if (!std::isalpha(i) || std::isdigit(i))
-					//isCorrect = !std::isspace(i) == 0; //Default Wrong Input except if i is ' '
-				{
-					isCorrect = std::isspace(i) != 0;
-				}
+					isCorrect = std::isspace(i) != 0; //If i is ' ' return true else false
 				else if (std::isalpha(i))
 					//Correct input
 					isCorrect = true;
@@ -221,11 +284,12 @@ void DatabaseInterface::validateName(std::string& name) const
 
 	} while (!isCorrect);
 }
-void DatabaseInterface::validateIndex(std::size_t& index) const
+
+void DatabaseInterface::validateIndex(int& index) const
 {
 	std::string temp;
 
-	while(getRecordsSize() < index + 1)
+	while(!checkRecordIndex(index))
 	{
 		std::cout << '\n' << "Invalid Input." << '\n'
 			<< "Please try again or press 'x' to cancel: ";
@@ -247,20 +311,31 @@ void DatabaseInterface::validateIndex(std::size_t& index) const
 	}
 }
 
-void DatabaseInterface::initTable()
+void DatabaseInterface::initializeTable()
 {
-	m_table.clearTextTable();
-
 	m_table.add("ID");
 	m_table.add("Firstname");
 	m_table.add("Lastname");
 	m_table.endOfRow();
 }
-void DatabaseInterface::addRecordToTableByIndex(const std::size_t index)
+void DatabaseInterface::clearTable()
 {
-	m_table.add(std::to_string(index));
-	m_table.add(Database::getName(index, true));
-	m_table.add(Database::getName(index, false));
+	m_table.clearTextTable();
+}
+void DatabaseInterface::addRecordToTableByRecord(Record &record)
+{
+	m_table.add(std::to_string(record.ID));
+	m_table.add(record.Firstname);
+	m_table.add(record.Lastname);
+	m_table.endOfRow();
+}
+void DatabaseInterface::addRecordToTableByIndex(const unsigned int index)
+{
+	const auto temp = getRecordByIndex(index);
+
+	m_table.add(std::to_string(temp.ID));
+	m_table.add(temp.Firstname);
+	m_table.add(temp.Lastname);
 	m_table.endOfRow();
 }
 

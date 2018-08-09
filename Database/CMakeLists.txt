@@ -10,8 +10,6 @@ set( DATABASE_SOURCES
 	src/TextTable.cpp
 	src/DatabaseInterface.h
 	src/DatabaseInterface.cpp
-	src/RecordsManager.h
-	src/RecordsManager.cpp
 )
 
 add_executable(${PROJECT_NAME} ${DATABASE_SOURCES})

@@ -5,10 +5,10 @@
 struct Record
 {
 	Record();
-	Record(std::size_t id, std::string firstname, std::string lastname);
+	Record(unsigned int id, std::string firstname, std::string lastname);
 
 	//Values
-	std::size_t ID;
+	unsigned int ID;
 
 	std::string Firstname;
 	std::string Lastname;

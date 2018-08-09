@@ -1,10 +1,10 @@
-#include "Menu.h"
+#include "DatabaseInterface.h"
 
 int main()
 {
 	//Database database;
 	//database.displayMenu();
-	Menu menu;
+	DatabaseInterface databaseinterface;
 
 	return 0;
 }

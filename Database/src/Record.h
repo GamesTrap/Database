@@ -2,14 +2,14 @@
 
 #include <string>
 
-class Record
+struct Record
 {
-public:
-	Record(unsigned int id, std::string firstname, std::string lastname);
 	Record();
+	Record(unsigned int id, std::string firstname, std::string lastname);
 
-	unsigned int m_id;
+	//Values
+	unsigned int ID;
 
-	std::string m_firstname;
-	std::string m_lastname;
+	std::string Firstname;
+	std::string Lastname;
 };

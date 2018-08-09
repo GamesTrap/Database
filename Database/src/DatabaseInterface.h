@@ -1,0 +1,43 @@
+#pragma once
+
+#include "Database.h"
+#include "TextTable.h"
+
+class DatabaseInterface : public Database
+{
+public:
+	//Constructor
+	DatabaseInterface();
+
+	//Menus
+	void displayMenu();
+	void displayUpdateMenu();
+	
+private:
+	//Functions
+	void addRecordFromUser();
+	void showRecordByIndexFromUser();
+	void showAllRecords();
+
+	//Getters
+	std::string getNameFromUser() const;
+	int getIndexFromUser() const;
+	bool getTableWithRecord(TextTable &table);
+
+	//Validators
+	void validateName(std::string& name) const;
+	void validateIndex(int &index) const;
+
+	//Table Functions
+	void initializeTable();
+	void clearTable();
+	void addRecordToTableByRecord(Record &record);
+	void addRecordToTableByIndex(unsigned int index);
+
+	//Utility Functions
+	static void clearScreen();
+	static void continueScreen();
+	bool confirmScreen() const;
+
+	TextTable m_table;
+};

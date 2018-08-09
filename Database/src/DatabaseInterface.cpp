@@ -351,8 +351,8 @@ void DatabaseInterface::exportDatabaseToFile()
 	std::cout << "Please enter a filename: ";
 
 	std::string filename(getFilenameFromUser());
-	if (filename.find(".db") == std::string::npos)
-		filename += ".db";
+	if (filename.find(".csv") == std::string::npos && filename.find(".db") == std::string::npos)
+		filename += ".csv";
 
 	std::ofstream output(filename);
 

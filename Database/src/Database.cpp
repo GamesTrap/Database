@@ -47,8 +47,8 @@ std::string Database::toString()
 	{
 		if (i == 0)
 			temp += std::to_string(m_records.at(i).ID) + "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
-
-		temp += "," + std::to_string(m_records.at(i).ID) + "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
+		else
+		    temp += "," + std::to_string(m_records.at(i).ID) + "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
 	}
 
 	return temp;

@@ -1,6 +1,8 @@
-#include <iostream>
 #include "DatabaseInterface.h"
+
+#include <iostream>
 #include <cctype>
+#include <fstream>
 
 DatabaseInterface::DatabaseInterface() { displayMenu(); }
 
@@ -128,7 +130,10 @@ void DatabaseInterface::displayShowMenu()
 		switch (menuStr.at(0))
 		{
 		case '1':
+			clearScreen();
+			getNumberOfRecords();
 			showAllRecords();
+			continueScreen();
 			break;
 		case '2':
 			showRecordByIndexFromUser();
@@ -144,7 +149,7 @@ void DatabaseInterface::displayShowMenu()
 	}
 }
 
-void DatabaseInterface::displaySettingsMenu() const
+void DatabaseInterface::displaySettingsMenu()
 {
 	int menu;
 	std::string menuStr;
@@ -154,9 +159,10 @@ void DatabaseInterface::displaySettingsMenu() const
 		clearScreen();
 
 		std::cout << "1 - Export" << '\n'
-				<< "2 - Import" << '\n'
-				<< "3 - Main Menu" << '\n'
-				<< "Enter a number and press enter: ";
+			<< "2 - Import" << '\n'
+		    << "3 - Clear Database" << '\n'
+			<< "4 - Main Menu" << '\n'
+			<< "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
 		if (menuStr.length() > 1)
@@ -172,11 +178,63 @@ void DatabaseInterface::displaySettingsMenu() const
 		switch (menu)
 		{
 		case 1:
-
+			displayExportMenu();
 			break;
 		case 2:
 
 			break;
+		case 3:
+			
+			break;
+		case 'x':
+			[[fallthrough]];
+		case 4:
+			return;
+
+		default:
+			;
+		}
+	}
+}
+
+void DatabaseInterface::displayExportMenu()
+{
+	int menu;
+	std::string menuStr;
+
+	while (true)
+	{
+		clearScreen();
+
+		std::cout << "1 - Export Table" << '\n'
+			      << "2 - Export for Reimport" << '\n'
+			      << "3 - Main Menu" << '\n'
+			      << "Enter a number and press enter: ";
+
+		std::getline(std::cin, menuStr);
+		if (menuStr.length() > 1)
+			menu = -1;
+		else if (menuStr == "x" || menuStr == "X")
+			return;
+		else
+		{
+			try { menu = std::stoi(menuStr); }
+			catch (...) { menu = -1; }
+		}
+
+		switch (menu)
+		{
+		case 1:
+			clearScreen();
+			showAllRecords();
+			exportTableToFile();
+			continueScreen();
+			break;
+		case 2:
+
+			break;
+		case 'x':
+			[[fallthrough]];
 		case 3:
 			return;
 
@@ -254,27 +312,12 @@ void DatabaseInterface::showRecordByIndexFromUser()
 
 void DatabaseInterface::showAllRecords()
 {
-	clearScreen();
-
-	const std::size_t recordsSize = getNextId();
-
-	if (recordsSize == 0)
-	{
-		std::cout << "Records: " << recordsSize << '\n' << '\n';
-		continueScreen();
-		return;
-	}
-
-	std::cout << "Records: " << recordsSize << '\n';
-
 	clearTable();
 	initializeTable();
 
-	for (unsigned int i = 0; i < recordsSize; i++) { addRecordToTableByIndex(i); }
+	for (unsigned int i = 0; i < getNextId(); i++) { addRecordToTableByIndex(i); }
 
 	std::cout << '\n' << m_table << '\n';
-
-	continueScreen();
 }
 
 void DatabaseInterface::updateFirstname(const int index)
@@ -347,6 +390,32 @@ bool DatabaseInterface::getTableWithRecord(TextTable& table, const int index)
 	return true;
 }
 
+void DatabaseInterface::getNumberOfRecords() const
+{
+	const std::size_t recordsSize = getNextId();
+
+	if (recordsSize == 0)
+	{
+		std::cout << "Records: " << recordsSize << '\n' << '\n';
+		continueScreen();
+		return;
+	}
+
+	std::cout << "Records: " << recordsSize << '\n';
+}
+
+std::string DatabaseInterface::getFilenameFromUser() const
+{
+	std::string filename;
+
+	std::cin.clear();
+	std::getline(std::cin, filename);
+
+	validateFilename(filename);
+
+	return filename;
+}
+
 void DatabaseInterface::validateName(std::string& name) const
 {
 	bool isCorrect = false; //Default Wrong Input
@@ -405,6 +474,35 @@ void DatabaseInterface::validateIndex(int& index) const
 	}
 }
 
+void DatabaseInterface::validateFilename(std::string& filename) const
+{
+	bool isCorrect = false;
+
+	do
+	{
+		if (filename.empty())
+			isCorrect = false; //Wrong Input
+		else if (filename.at(0) == ' ')
+			isCorrect = false; //Wrong Input
+		else if (filename.at(filename.size() - 1) == ' ')
+			isCorrect = false; //Wront Input
+		else
+		{
+			isCorrect = true;
+		}
+
+		if (filename.find(".txt") == std::string::npos)
+			filename += ".txt";
+
+		if (!isCorrect) //Handle Wrong Input
+		{
+			std::cout << '\n' << "Wrong Input!" << '\n' << "Please try again: ";
+			std::cin.clear();
+			std::getline(std::cin, filename);
+		}
+	} while (!isCorrect);
+}
+
 void DatabaseInterface::initializeTable()
 {
 	m_table.add("ID");
@@ -431,6 +529,27 @@ void DatabaseInterface::addRecordToTableByIndex(const unsigned int index)
 	m_table.add(temp.Firstname);
 	m_table.add(temp.Lastname);
 	m_table.endOfRow();
+}
+
+void DatabaseInterface::exportTableToFile() const
+{
+	std::cout << "Please enter a filename: ";
+
+	const std::string filename(getFilenameFromUser());
+
+	std::ofstream output(filename);
+
+	if(!output)
+	{
+		std::cerr << filename << " could not be opened for writing!" << std::endl;
+		return;
+	}
+
+	output << m_table;
+
+	output.close();
+
+	std::cout << '\n' << "Successfully exported Table!" << '\n' << '\n';
 }
 
 void DatabaseInterface::clearScreen() { std::cout << std::string(100, '\n'); }

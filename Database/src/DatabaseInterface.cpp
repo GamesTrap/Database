@@ -207,7 +207,7 @@ void DatabaseInterface::displayExportMenu()
 		clearScreen();
 
 		std::cout << "1 - Export Table" << '\n'
-			      << "2 - Export for Reimport" << '\n'
+			      << "2 - Export Database" << '\n'
 			      << "3 - Main Menu" << '\n'
 			      << "Enter a number and press enter: ";
 
@@ -231,7 +231,9 @@ void DatabaseInterface::displayExportMenu()
 			continueScreen();
 			break;
 		case 2:
-
+			clearScreen();
+			exportDatabaseToFile();
+			continueScreen();
 			break;
 		case 'x':
 			[[fallthrough]];
@@ -342,6 +344,29 @@ void DatabaseInterface::updateLastname(const int index)
 	const std::string lastname{getNameFromUser()};
 
 	setLastname(index, lastname);
+}
+
+void DatabaseInterface::exportDatabaseToFile()
+{
+	std::cout << "Please enter a filename: ";
+
+	std::string filename(getFilenameFromUser());
+	if (filename.find(".db") == std::string::npos)
+		filename += ".db";
+
+	std::ofstream output(filename);
+
+	if (!output)
+	{
+		std::cerr << filename << " could not be opened for writing!" << std::endl;
+		return;
+	}
+
+	output << toString();
+
+	output.close();
+
+	std::cout << '\n' << "Successfully exported Database!" << '\n' << '\n';
 }
 
 std::string DatabaseInterface::getNameFromUser() const
@@ -491,9 +516,6 @@ void DatabaseInterface::validateFilename(std::string& filename) const
 			isCorrect = true;
 		}
 
-		if (filename.find(".txt") == std::string::npos)
-			filename += ".txt";
-
 		if (!isCorrect) //Handle Wrong Input
 		{
 			std::cout << '\n' << "Wrong Input!" << '\n' << "Please try again: ";
@@ -535,7 +557,9 @@ void DatabaseInterface::exportTableToFile() const
 {
 	std::cout << "Please enter a filename: ";
 
-	const std::string filename(getFilenameFromUser());
+	std::string filename(getFilenameFromUser());
+	if (filename.find(".txt") == std::string::npos)
+		filename += ".txt";
 
 	std::ofstream output(filename);
 

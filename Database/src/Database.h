@@ -17,6 +17,8 @@ public:
 
 	bool checkRecordIndex(unsigned int index) const;
 
+	std::string toString();
+
 private:
 	std::string getName(unsigned int Index, bool isFirstname);
 	void setId(unsigned int index);

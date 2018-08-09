@@ -39,6 +39,22 @@ bool Database::checkRecordIndex(const unsigned int index) const
 	return getNextId() > index;
 }
 
+std::string Database::toString()
+{
+	std::string temp;
+
+	for(unsigned int i = 0; i < m_records.size(); i++)
+	{
+		if (i == 0)
+			temp += std::to_string(m_records.at(i).ID) + "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
+
+		temp += "," + std::to_string(m_records.at(i).ID) + "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
+	}
+
+	return temp;
+}
+
+
 //Private:
 std::string Database::getName(const unsigned int Index, const bool isFirstname)
 {

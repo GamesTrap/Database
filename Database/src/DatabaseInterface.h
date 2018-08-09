@@ -24,6 +24,7 @@ private:
 	void showAllRecords();
 	void updateFirstname(int index);
 	void updateLastname(int index);
+	void exportDatabaseToFile();
 
 	//Getters
 	std::string getNameFromUser() const;

@@ -71,14 +71,18 @@ void DatabaseInterface::displayUpdateMenu()
 	int menu;
 	std::string menuStr;
 
-	if(!getTableWithRecord(m_table))
-		return;
+	clearScreen();
+	std::cout << "Please enter a Database ID: ";
+	const int index = getIndexFromUser();
 
 	while (true)
 	{
+		if (!getTableWithRecord(m_table, index))
+			return;
+
 		clearScreen();
 
-		std::cout << '\n' << m_table << '\n' << '\n';
+		std::cout << '\n' << m_table << '\n';
 
 		std::cout << "1 - Change ID" << '\n'
 			      << "2 - Change Firstname" << '\n'
@@ -114,7 +118,7 @@ void DatabaseInterface::displayUpdateMenu()
 
 			break;
 		case 4:
-
+			removeRecordFromUser(index);
 			break;
 		case 5:
 			return;
@@ -129,7 +133,9 @@ void DatabaseInterface::addRecordFromUser()
 {
 	clearScreen();
 
-	std::cout << "Database ID: " << getNextId() << '\n' << '\n';
+	int id = getNextId();
+
+	std::cout << "Database ID: " << id << '\n' << '\n';
 
 	std::cout << "Please enter firstname: ";
 	const std::string firstname = getNameFromUser();
@@ -138,7 +144,28 @@ void DatabaseInterface::addRecordFromUser()
 	std::cout << "Please enter lastname: ";
 	const std::string lastname = getNameFromUser();
 
-	addRecord(firstname, lastname);
+	addRecord(id, firstname, lastname);
+}
+void DatabaseInterface::removeRecordFromUser(const int index)
+{
+	if (!confirmScreen())
+		return;
+
+	clearScreen();	
+
+	if(index == -1)
+	{
+		std::cout << '\n';
+		return;
+	}
+
+	removeRecord(index);
+
+	std::cout << "Database Record deleted!" << '\n';
+
+	continueScreen();
+
+	displayMenu();
 }
 void DatabaseInterface::showRecordByIndexFromUser()
 {
@@ -229,12 +256,8 @@ int DatabaseInterface::getIndexFromUser() const
 	return index;
 }
 
-bool DatabaseInterface::getTableWithRecord(TextTable& table)
+bool DatabaseInterface::getTableWithRecord(TextTable& table, const int index)
 {
-	clearScreen();
-	std::cout << "Please enter a Database ID: ";
-	const int index = getIndexFromUser();
-
 	if(index == -1)
 	{
 		std::cout << '\n';

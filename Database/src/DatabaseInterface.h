@@ -16,13 +16,14 @@ public:
 private:
 	//Functions
 	void addRecordFromUser();
+	void removeRecordFromUser(int index);
 	void showRecordByIndexFromUser();
 	void showAllRecords();
 
 	//Getters
 	std::string getNameFromUser() const;
 	int getIndexFromUser() const;
-	bool getTableWithRecord(TextTable &table);
+	bool getTableWithRecord(TextTable &table, int index);
 
 	//Validators
 	void validateName(std::string& name) const;

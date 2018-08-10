@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 
+///Public:
 //Constructor
 DatabaseInterface::DatabaseInterface() { displayMenu(); }
 
@@ -97,10 +98,10 @@ void DatabaseInterface::displayUpdateMenu()
 		case '0':
 			return;
 		case '1':
-			updateFirstname(index);
+			updateName(index, true);
 			break;
 		case '2':
-			updateLastname(index);
+			updateName(index, false);
 			break;
 		case '3':
 			removeRecordFromUser(index);
@@ -298,6 +299,7 @@ void DatabaseInterface::displayImportMenu()
 	}
 }
 
+///Private:
 //Functions
 void DatabaseInterface::addRecordFromUser()
 {
@@ -371,27 +373,26 @@ void DatabaseInterface::showAllRecords()
 
 	std::cout << '\n' << m_table << '\n';
 }
-void DatabaseInterface::updateFirstname(const int index)
+void DatabaseInterface::updateName(const int index, const bool isFirstname)
 {
 	clearScreen();
 
 	std::cout << m_table << '\n';
 
-	std::cout << "Please enter firstname: ";
-	const std::string firstname{getNameFromUser()};
+	if(isFirstname)
+	{
+		std::cout << "Please enter firstname: ";
+		const std::string firstname(getNameFromUser());
 
-	setFirstname(index, firstname);
-}
-void DatabaseInterface::updateLastname(const int index)
-{
-	clearScreen();
+		setName(index, firstname, true);
+	}
+	else
+	{
+		std::cout << "Please enter lastname: ";
+		const std::string lastname(getNameFromUser());
 
-	std::cout << m_table << '\n';
-
-	std::cout << "Please enter lastname: ";
-	const std::string lastname{getNameFromUser()};
-
-	setLastname(index, lastname);
+		setName(index, lastname, false);
+	}
 }
 void DatabaseInterface::exportDatabaseToFile()
 {

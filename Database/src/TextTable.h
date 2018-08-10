@@ -9,7 +9,7 @@ public:
 	//Constructor
 	explicit TextTable(char horizontal = '-', char vertical = '|', char corner = '+');
 
-	//External Table Functions
+	//Table Functions
 	void add(std::string const& content);
 	void clearTextTable();
 	void endOfRow();
@@ -25,7 +25,7 @@ private:
 	int getWidth(std::size_t i) const;
 	std::size_t getColumns() const;
 
-	//Internal Table Functions
+	//Table Functions
 	void determineWidths() const;
 	static std::string repeat(std::size_t times, char c);
 

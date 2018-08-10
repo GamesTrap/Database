@@ -2,11 +2,12 @@
 
 #include <iomanip>
 
+///Public:
 //Constructor
 TextTable::TextTable(const char horizontal, const char vertical, const char corner)
 	: m_horizontal{horizontal}, m_vertical{vertical}, m_corner{corner} {}
 
-//External Table Functions
+//Table Functions
 void TextTable::add(std::string const& content) { m_current.push_back(content); }
 void TextTable::clearTextTable()
 {
@@ -42,6 +43,7 @@ std::ostream& operator<<(std::ostream& stream, TextTable const& table)
 	return stream;
 }
 
+///Private:
 //Getters
 std::string TextTable::getRuler() const
 {
@@ -60,7 +62,7 @@ char TextTable::getVerticalChar() const { return m_vertical; }
 int TextTable::getWidth(const std::size_t i) const { return m_width.at(i); }
 std::size_t TextTable::getColumns() const { return m_rows.at(0).size(); }
 
-//Internal Table Functions
+//Table Functions
 void TextTable::determineWidths() const
 {
 	m_width.assign(getColumns(), 0);

@@ -2,6 +2,7 @@
 
 #include <cctype>
 
+///Public:
 //Functions
 void Database::addRecord(unsigned int id, std::string Firstname, std::string Lastname)
 {
@@ -63,18 +64,17 @@ bool Database::isDatabaseEmpty() const
 	return getNextId() <= 0;
 }
 
-//External Getters
+//Getters
 Record Database::getRecordByIndex(const unsigned int index) { return Record(m_records.at(index)); }
 unsigned int Database::getNextId() const { return static_cast<unsigned int>(m_records.size()); }
 
-//External Setters
-void Database::setFirstname(const unsigned int index, const std::string& Firstname)
+//Setters
+void Database::setName(const unsigned int index, const std::string& name, const bool isFirstname)
 {
-	m_records.at(index).Firstname = Firstname;
-}
-void Database::setLastname(const unsigned int index, const std::string& Lastname)
-{
-	m_records.at(index).Lastname = Lastname;
+	if (isFirstname)
+		m_records.at(index).Firstname = name;
+	else
+		m_records.at(index).Lastname = name;
 }
 
 //Checkers
@@ -132,22 +132,6 @@ bool Database::validateFilename(std::string& filename)
 	return isCorrect;
 }
 
-//Internal Getters
-std::string Database::getName(const unsigned int Index, const bool isFirstname)
-{
-	if (m_records.empty())
-		return "";
-
-	if (m_records.size() >= Index + 1)
-	{
-		if (isFirstname)
-			return m_records.at(Index).Firstname;
-
-		return m_records.at(Index).Lastname;
-	}
-
-	return "";
-}
-
-//Internal Setters
+///Private:
+//Setters
 void Database::setId(const unsigned int index) { m_records.at(index).ID = index; }

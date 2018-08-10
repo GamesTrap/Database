@@ -14,13 +14,12 @@ public:
 	bool importDatabase(std::vector<std::string> &CSVs, unsigned int elements);
 	bool isDatabaseEmpty() const;
 
-	//External Getters
+	//Getters
 	Record getRecordByIndex(unsigned int index);
 	unsigned int getNextId() const;
 
-	//External Setters
-	void setFirstname(unsigned int index, const std::string& Firstname);
-	void setLastname(unsigned int index, const std::string& Lastname);
+	// Setters
+	void setName(unsigned int index, const std::string& name, bool isFirstname);
 
 	//Checkers
 	bool checkRecordIndex(unsigned int index) const;
@@ -30,10 +29,7 @@ public:
 	static bool validateFilename(std::string& filename);
 	
 private:
-	//Internal Getters
-	std::string getName(unsigned int Index, bool isFirstname);
-
-	//Internal Setters
+	//Setters
 	void setId(unsigned int index);
 
 	//Vectors

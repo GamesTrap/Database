@@ -23,8 +23,7 @@ private:
 	void removeRecordFromUser(int index);
 	void showRecordByIndexFromUser();
 	void showAllRecords();
-	void updateFirstname(int index);
-	void updateLastname(int index);
+	void updateName(int index, bool isFirstname);
 	void exportDatabaseToFile();
 	void importFileToDatabase();
 	bool databaseIsEmpty() const;

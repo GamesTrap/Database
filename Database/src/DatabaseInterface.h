@@ -15,6 +15,7 @@ public:
 	void displayShowMenu();
 	void displaySettingsMenu();
 	void displayExportMenu();
+	void displayImportMenu();
 
 private:
 	//Functions
@@ -25,6 +26,7 @@ private:
 	void updateFirstname(int index);
 	void updateLastname(int index);
 	void exportDatabaseToFile();
+	void importFileToDatabaseOverwrite();
 
 	//Getters
 	std::string getNameFromUser() const;

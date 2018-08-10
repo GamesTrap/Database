@@ -178,13 +178,29 @@ void DatabaseInterface::displaySettingsMenu()
 		switch (menu)
 		{
 		case 1:
-			displayExportMenu();
+			if(getNextId() > 0)
+			    displayExportMenu();
+			else
+			{
+				clearScreen();
+				std::cout << '\n' << "Database is empty!" << '\n' << '\n';
+				continueScreen();				
+			}
 			break;
 		case 2:
-
+			if (getNextId() > 0)
+				displayImportMenu();
+			else
+			{
+				if (!confirmScreen())
+					return;
+				clearScreen();
+				importFileToDatabaseOverwrite();
+				continueScreen();
+			}
 			break;
 		case 3:
-			
+			clearRecords();
 			break;
 		case 'x':
 			[[fallthrough]];
@@ -233,6 +249,62 @@ void DatabaseInterface::displayExportMenu()
 		case 2:
 			clearScreen();
 			exportDatabaseToFile();
+			continueScreen();
+			break;
+		case 'x':
+			[[fallthrough]];
+		case 3:
+			return;
+
+		default:
+			;
+		}
+	}
+}
+
+void DatabaseInterface::displayImportMenu()
+{
+	int menu;
+	std::string menuStr;
+
+	while (true)
+	{
+		clearScreen();
+
+		std::cout << "1 - Overwrite All" << '\n'
+			<< "2 - Add to existing" << '\n'
+			<< "3 - Main Menu" << '\n'
+			<< "Enter a number and press enter: ";
+
+		std::getline(std::cin, menuStr);
+		if (menuStr.length() > 1)
+			menu = -1;
+		else if (menuStr == "x" || menuStr == "X")
+			return;
+		else
+		{
+			try { menu = std::stoi(menuStr); }
+			catch (...) { menu = -1; }
+		}
+
+		switch (menu)
+		{
+		case 1:
+			if (!confirmScreen())
+				break;
+
+			clearScreen();
+			importFileToDatabaseOverwrite();
+			continueScreen();
+			break;
+		case 2:
+			if (!confirmScreen())
+				break;
+
+			clearScreen();
+			
+
+
 			continueScreen();
 			break;
 		case 'x':
@@ -358,7 +430,7 @@ void DatabaseInterface::exportDatabaseToFile()
 
 	if (!output)
 	{
-		std::cerr << filename << " could not be opened for writing!" << std::endl;
+		std::cerr << '\n' << filename << " could not be opened for writing!" << '\n' << std::endl;
 		return;
 	}
 
@@ -367,6 +439,46 @@ void DatabaseInterface::exportDatabaseToFile()
 	output.close();
 
 	std::cout << '\n' << "Successfully exported Database!" << '\n' << '\n';
+}
+
+void DatabaseInterface::importFileToDatabaseOverwrite()
+{
+	std::string temp;
+	std::vector<std::string> CSVs;
+	unsigned int lines = 0;
+
+	std::cout << "Please enter a filename: ";
+
+	std::string filename(getFilenameFromUser());
+	if (filename.find(".csv") == std::string::npos && filename.find(".db") == std::string::npos)
+		filename += ".csv";
+
+	std::ifstream input(filename);
+
+	if(!input)
+	{
+		std::cerr << '\n' << filename << " could not be opened for reading!" << '\n' << std::endl;
+		return;
+	}
+
+	while(input)
+	{
+		std::getline(input, temp, ',');
+		if (temp.at(temp.length() - 1) == '\n')
+			temp.pop_back();
+
+		CSVs.push_back(temp);
+		lines++;
+	}
+	lines--;
+
+	if (!importOverwrite(CSVs, lines))
+		std::cout << '\n' << "An error has occured!" << '\n' << '\n';
+	else
+	{
+		showAllRecords();
+		std::cout << '\n' << "Successfully imported Database!" << '\n' << '\n';		
+	}
 }
 
 std::string DatabaseInterface::getNameFromUser() const

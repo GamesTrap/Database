@@ -1,5 +1,7 @@
 #include "Database.h"
 
+#include <cctype>
+
 //Public:
 void Database::addRecord(unsigned int id, std::string Firstname, std::string Lastname)
 {
@@ -54,6 +56,68 @@ std::string Database::toString()
 	return temp;
 }
 
+bool Database::importOverwrite(std::vector<std::string> &CSVs, unsigned int lines)
+{
+	unsigned int id;
+
+	clearRecords();
+
+	for(unsigned int i = 0; i < lines; i++)
+	{
+		try
+		{
+			id = std::stoi(CSVs.at(i));
+		}
+		catch(...)
+		{
+			return false;
+		}
+
+		if (CSVs.at(i + 1).empty())
+			return false;
+		if (CSVs.at(i + 1).at(0) == ' ')
+			return false;
+		if (CSVs.at(i + 1).at(CSVs.at(i + 1).size() - 1) == ' ')
+			return false;
+		for (auto& ch : CSVs.at(i + 1))
+		{
+			if (!std::isalpha(ch) || std::isdigit(ch))
+				if (ch != ' ')
+					return false;
+		}
+
+		std::string firstname = CSVs.at(i + 1);
+
+		if (CSVs.at(i + 2).empty())
+			return false;
+		if (CSVs.at(i + 2).at(0) == ' ')
+			return false;
+		if (CSVs.at(i + 2).at(CSVs.at(i + 2).size() - 1) == ' ')
+			return false;
+		for (auto& ch : CSVs.at(i + 2))
+		{
+			if (!std::isalpha(ch) || std::isdigit(ch))
+			{
+				if (ch != ' ')
+					return false;			
+			}
+		}
+
+		std::string lastname = CSVs.at(i + 2);
+
+		m_records.emplace_back(id, firstname, lastname);
+
+		i += 2;
+	}
+
+	return true;
+}
+
+
+void Database::clearRecords()
+{
+	m_records.clear();
+}
 
 //Private:
 std::string Database::getName(const unsigned int Index, const bool isFirstname)

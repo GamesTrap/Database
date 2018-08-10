@@ -19,6 +19,10 @@ public:
 
 	std::string toString();
 
+	bool importOverwrite(std::vector<std::string> &CSVs, unsigned int lines);
+
+	void clearRecords();
+
 private:
 	std::string getName(unsigned int Index, bool isFirstname);
 	void setId(unsigned int index);

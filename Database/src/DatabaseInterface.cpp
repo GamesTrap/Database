@@ -182,7 +182,7 @@ void DatabaseInterface::displaySettingsMenu()
 				displayExportMenu();
 			break;
 		case '2':
-			if (isDatabaseEmpty())
+			if (!isDatabaseEmpty())
 				displayImportMenu();
 			else
 			{
@@ -194,9 +194,12 @@ void DatabaseInterface::displaySettingsMenu()
 			}
 			break;
 		case '3':
-			if(!confirmScreen())
+			if (databaseIsEmpty())
 				break;
-			clearRecords();
+			if (!confirmScreen())
+				break;
+			clearDatabase();
+			continueScreen();
 			break;
 
 		default:
@@ -300,7 +303,7 @@ void DatabaseInterface::addRecordFromUser()
 {
 	clearScreen();
 
-	const int id = getNextId();
+	const unsigned int id = getNextId();
 
 	std::cout << "Database ID: " << id << '\n' << '\n';
 
@@ -444,7 +447,7 @@ void DatabaseInterface::importFileToDatabase()
 	elements--;
 
 	if (!importDatabase(CSVs, elements))
-		std::cout << '\n' << "An error has occured!" << '\n' << '\n';
+		std::cout << '\n' << filename << " Synatx error!" << '\n' << '\n';
 	else
 	{
 		showAllRecords();
@@ -462,6 +465,12 @@ bool DatabaseInterface::databaseIsEmpty() const
 	}
 
 	return false;
+}
+void DatabaseInterface::clearDatabase()
+{
+	clearRecords();
+
+	std::cout << '\n' << "Database cleared successfully!" << '\n' << '\n';
 }
 
 //Utility Functions
@@ -547,7 +556,7 @@ bool DatabaseInterface::getTableWithRecord(TextTable& table, const int index)
 }
 void DatabaseInterface::getNumberOfRecords() const
 {
-	const std::size_t recordsSize = getNextId();
+	const unsigned int recordsSize = getNextId();
 
 	if (recordsSize == 0)
 	{

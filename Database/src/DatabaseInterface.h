@@ -28,6 +28,7 @@ private:
 	void exportDatabaseToFile();
 	void importFileToDatabase();
 	bool databaseIsEmpty() const;
+	void clearDatabase();
 
 	//Utility Functions
 	static void clearScreen();

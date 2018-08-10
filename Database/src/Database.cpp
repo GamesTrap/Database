@@ -36,37 +36,24 @@ std::string Database::exportDatabaseAsString()
 
 	return temp;
 }
-bool Database::importDatabase(std::vector<std::string> &CSVs, unsigned int elements)
+bool Database::importDatabase(std::vector<std::string> &CSVs, const unsigned int elements)
 {
 	bool isCorrect = true;
 
 	for (unsigned int i = 0; i < elements; i += 2)
 	{
-		if (CSVs.at(i + 1).empty())
-			isCorrect = false;
-		if (CSVs.at(i + 1).at(0) == ' ')
-			isCorrect = false;
-		if (CSVs.at(i + 1).at(CSVs.at(i + 1).size() - 1) == ' ')
-			isCorrect = false;
-		for (auto& ch : CSVs.at(i + 1))
-			if (!std::isalpha(ch) || std::isdigit(ch))
-				isCorrect = ch != ' ';
-
 		std::string firstname = CSVs.at(i + 1);
 
-		if (CSVs.at(i + 2).empty())
+		if (!validateName(firstname))
 			isCorrect = false;
-		if (CSVs.at(i + 2).at(0) == ' ')
-			isCorrect = false;
-		if (CSVs.at(i + 2).at(CSVs.at(i + 2).size() - 1) == ' ')
-			isCorrect = false;
-		for (auto& ch : CSVs.at(i + 2))
-			if (!std::isalpha(ch) || std::isdigit(ch))
-				isCorrect = ch != ' ';
 
 		std::string lastname = CSVs.at(i + 2);
 
-		m_records.emplace_back(getNextId(), firstname, lastname);
+		if (!validateName(lastname))
+			isCorrect = false;
+
+	    if(isCorrect)
+		    m_records.emplace_back(getNextId(), firstname, lastname);
 	}
 
 	return isCorrect;
@@ -78,7 +65,7 @@ bool Database::isDatabaseEmpty() const
 
 //External Getters
 Record Database::getRecordByIndex(const unsigned int index) { return Record(m_records.at(index)); }
-unsigned int Database::getNextId() const { return m_records.size(); }
+unsigned int Database::getNextId() const { return static_cast<unsigned int>(m_records.size()); }
 
 //External Setters
 void Database::setFirstname(const unsigned int index, const std::string& Firstname)
@@ -102,7 +89,7 @@ bool Database::checkRecordIndex(const unsigned int index) const
 //Validators
 bool Database::validateName(std::string& name)
 {
-	bool isCorrect = true;
+	bool isCorrect = false;
 
 	if (name.empty())
 		isCorrect = false; //Wrong Input

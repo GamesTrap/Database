@@ -3,8 +3,10 @@
 #include <iostream>
 #include <fstream>
 
+//Constructor
 DatabaseInterface::DatabaseInterface() { displayMenu(); }
 
+//Menus
 void DatabaseInterface::displayMenu()
 {
 	std::string menuStr;
@@ -56,7 +58,6 @@ void DatabaseInterface::displayMenu()
 		}
 	}
 }
-
 void DatabaseInterface::displayUpdateMenu()
 {
 	std::string menuStr;
@@ -110,7 +111,6 @@ void DatabaseInterface::displayUpdateMenu()
 		}
 	}
 }
-
 void DatabaseInterface::displayShowMenu()
 {
 	std::string menuStr;
@@ -151,7 +151,6 @@ void DatabaseInterface::displayShowMenu()
 		}
 	}
 }
-
 void DatabaseInterface::displaySettingsMenu()
 {
 	std::string menuStr;
@@ -205,7 +204,6 @@ void DatabaseInterface::displaySettingsMenu()
 		}
 	}
 }
-
 void DatabaseInterface::displayExportMenu()
 {
 	std::string menuStr;
@@ -248,7 +246,6 @@ void DatabaseInterface::displayExportMenu()
 		}
 	}
 }
-
 void DatabaseInterface::displayImportMenu()
 {
 	std::string menuStr;
@@ -298,6 +295,7 @@ void DatabaseInterface::displayImportMenu()
 	}
 }
 
+//Functions
 void DatabaseInterface::addRecordFromUser()
 {
 	clearScreen();
@@ -315,7 +313,6 @@ void DatabaseInterface::addRecordFromUser()
 
 	addRecord(id, firstname, lastname);
 }
-
 void DatabaseInterface::removeRecordFromUser(const int index)
 {
 	if (!confirmScreen())
@@ -337,7 +334,6 @@ void DatabaseInterface::removeRecordFromUser(const int index)
 
 	displayMenu();
 }
-
 void DatabaseInterface::showRecordByIndexFromUser()
 {
 	clearScreen();
@@ -363,7 +359,6 @@ void DatabaseInterface::showRecordByIndexFromUser()
 
 	continueScreen();
 }
-
 void DatabaseInterface::showAllRecords()
 {
 	clearTable();
@@ -373,7 +368,6 @@ void DatabaseInterface::showAllRecords()
 
 	std::cout << '\n' << m_table << '\n';
 }
-
 void DatabaseInterface::updateFirstname(const int index)
 {
 	clearScreen();
@@ -385,7 +379,6 @@ void DatabaseInterface::updateFirstname(const int index)
 
 	setFirstname(index, firstname);
 }
-
 void DatabaseInterface::updateLastname(const int index)
 {
 	clearScreen();
@@ -397,7 +390,6 @@ void DatabaseInterface::updateLastname(const int index)
 
 	setLastname(index, lastname);
 }
-
 void DatabaseInterface::exportDatabaseToFile()
 {
 	std::cout << "Please enter a filename: ";
@@ -414,13 +406,12 @@ void DatabaseInterface::exportDatabaseToFile()
 		return;
 	}
 
-	output << exporrtDatabaseAsString();
+	output << exportDatabaseAsString();
 
 	output.close();
 
 	std::cout << '\n' << "Successfully exported Database!" << '\n' << '\n';
 }
-
 void DatabaseInterface::importFileToDatabase()
 {
 	std::string temp;
@@ -460,7 +451,6 @@ void DatabaseInterface::importFileToDatabase()
 		std::cout << "Successfully imported Database!" << '\n' << '\n';		
 	}
 }
-
 bool DatabaseInterface::databaseIsEmpty() const
 {
 	if(isDatabaseEmpty())
@@ -474,6 +464,28 @@ bool DatabaseInterface::databaseIsEmpty() const
 	return false;
 }
 
+//Utility Functions
+void DatabaseInterface::clearScreen() { std::cout << std::string(100, '\n'); }
+void DatabaseInterface::continueScreen()
+{
+	std::cout << "Press Enter to continue . . . ";
+	std::cin.get();
+}
+bool DatabaseInterface::confirmScreen() const
+{
+	std::string confirm;
+	while (true)
+	{
+		std::cout << '\n' << "Are you sure (yes/no): ";
+		std::getline(std::cin, confirm);
+
+		//returns true if confirm == yes or YES or y or Y else returns false
+		return (!confirm.empty() && confirm == "yes") || (!confirm.empty() && confirm == "YES") || (!confirm.empty() &&
+			confirm == "y") || (!confirm.empty() && confirm == "Y");
+	}
+}
+
+//Getters
 std::string DatabaseInterface::getNameFromUser() const
 {
 	std::string temp;
@@ -490,7 +502,6 @@ std::string DatabaseInterface::getNameFromUser() const
 
 	return temp;
 }
-
 int DatabaseInterface::getIndexFromUser() const
 {
 	std::string idStr;
@@ -505,7 +516,7 @@ int DatabaseInterface::getIndexFromUser() const
 		catch (...) { index = -1; }
 	}
 
-	while (!validateIndex(index))
+	while (!checkRecordIndex(index))
 	{
 		if (idStr == "x" || idStr == "X")
 		{
@@ -520,7 +531,6 @@ int DatabaseInterface::getIndexFromUser() const
 
 	return index;
 }
-
 bool DatabaseInterface::getTableWithRecord(TextTable& table, const int index)
 {
 	if (index == -1)
@@ -535,7 +545,6 @@ bool DatabaseInterface::getTableWithRecord(TextTable& table, const int index)
 
 	return true;
 }
-
 void DatabaseInterface::getNumberOfRecords() const
 {
 	const std::size_t recordsSize = getNextId();
@@ -549,7 +558,6 @@ void DatabaseInterface::getNumberOfRecords() const
 
 	std::cout << "Records: " << recordsSize << '\n';
 }
-
 std::string DatabaseInterface::getFilenameFromUser() const
 {
 	std::string filename;
@@ -567,8 +575,7 @@ std::string DatabaseInterface::getFilenameFromUser() const
 	return filename;
 }
 
-
-
+//Table Functions
 void DatabaseInterface::initializeTable()
 {
 	m_table.add("ID");
@@ -576,9 +583,7 @@ void DatabaseInterface::initializeTable()
 	m_table.add("Lastname");
 	m_table.endOfRow();
 }
-
 void DatabaseInterface::clearTable() { m_table.clearTextTable(); }
-
 void DatabaseInterface::addRecordToTableByRecord(Record& record)
 {
 	m_table.add(std::to_string(record.ID));
@@ -586,7 +591,6 @@ void DatabaseInterface::addRecordToTableByRecord(Record& record)
 	m_table.add(record.Lastname);
 	m_table.endOfRow();
 }
-
 void DatabaseInterface::addRecordToTableByIndex(const unsigned int index)
 {
 	const auto temp = getRecordByIndex(index);
@@ -596,7 +600,6 @@ void DatabaseInterface::addRecordToTableByIndex(const unsigned int index)
 	m_table.add(temp.Lastname);
 	m_table.endOfRow();
 }
-
 void DatabaseInterface::exportTableToFile() const
 {
 	std::cout << "Please enter a filename: ";
@@ -618,26 +621,4 @@ void DatabaseInterface::exportTableToFile() const
 	output.close();
 
 	std::cout << '\n' << "Successfully exported Table!" << '\n' << '\n';
-}
-
-void DatabaseInterface::clearScreen() { std::cout << std::string(100, '\n'); }
-
-void DatabaseInterface::continueScreen()
-{
-	std::cout << "Press Enter to continue . . . ";
-	std::cin.get();
-}
-
-bool DatabaseInterface::confirmScreen() const
-{
-	std::string confirm;
-	while (true)
-	{
-		std::cout << '\n' << "Are you sure (yes/no): ";
-		std::getline(std::cin, confirm);
-
-		//returns true if confirm == yes or YES or y or Y else returns false
-		return (!confirm.empty() && confirm == "yes") || (!confirm.empty() && confirm == "YES") || (!confirm.empty() &&
-			confirm == "y") || (!confirm.empty() && confirm == "Y");
-	}
 }

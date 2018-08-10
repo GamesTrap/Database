@@ -2,12 +2,11 @@
 
 #include <cctype>
 
-//Public:
+//Functions
 void Database::addRecord(unsigned int id, std::string Firstname, std::string Lastname)
 {
 	m_records.emplace_back(id, Firstname, Lastname);
 }
-
 bool Database::removeRecord(const unsigned int index)
 {
 	if (!checkRecordIndex(index))
@@ -19,29 +18,11 @@ bool Database::removeRecord(const unsigned int index)
 
 	return true;
 }
-
-void Database::setFirstname(const unsigned int index, const std::string& Firstname)
+void Database::clearRecords()
 {
-	m_records.at(index).Firstname = Firstname;
+	m_records.clear();
 }
-
-void Database::setLastname(const unsigned int index, const std::string& Lastname)
-{
-	m_records.at(index).Lastname = Lastname;
-}
-
-Record Database::getRecordByIndex(const unsigned int index) { return Record(m_records.at(index)); }
-unsigned int Database::getNextId() const { return m_records.size(); }
-
-bool Database::checkRecordIndex(const unsigned int index) const
-{
-	if (m_records.empty())
-		return false;
-
-	return getNextId() > index;
-}
-
-std::string Database::exporrtDatabaseAsString()
+std::string Database::exportDatabaseAsString()
 {
 	std::string temp;
 
@@ -55,7 +36,6 @@ std::string Database::exporrtDatabaseAsString()
 
 	return temp;
 }
-
 bool Database::importDatabase(std::vector<std::string> &CSVs, unsigned int elements)
 {
 	bool isCorrect = true;
@@ -91,7 +71,35 @@ bool Database::importDatabase(std::vector<std::string> &CSVs, unsigned int eleme
 
 	return isCorrect;
 }
+bool Database::isDatabaseEmpty() const
+{
+	return getNextId() <= 0;
+}
 
+//External Getters
+Record Database::getRecordByIndex(const unsigned int index) { return Record(m_records.at(index)); }
+unsigned int Database::getNextId() const { return m_records.size(); }
+
+//External Setters
+void Database::setFirstname(const unsigned int index, const std::string& Firstname)
+{
+	m_records.at(index).Firstname = Firstname;
+}
+void Database::setLastname(const unsigned int index, const std::string& Lastname)
+{
+	m_records.at(index).Lastname = Lastname;
+}
+
+//Checkers
+bool Database::checkRecordIndex(const unsigned int index) const
+{
+	if (m_records.empty())
+		return false;
+
+	return getNextId() > index;
+}
+
+//Validators
 bool Database::validateName(std::string& name)
 {
 	bool isCorrect = true;
@@ -119,12 +127,6 @@ bool Database::validateName(std::string& name)
 
 	return isCorrect;
 }
-
-bool Database::validateIndex(int& index) const
-{
-	return checkRecordIndex(index);
-}
-
 bool Database::validateFilename(std::string& filename)
 {
 	bool isCorrect = true;
@@ -143,18 +145,7 @@ bool Database::validateFilename(std::string& filename)
 	return isCorrect;
 }
 
-
-void Database::clearRecords()
-{
-	m_records.clear();
-}
-
-bool Database::isDatabaseEmpty() const
-{
-	return getNextId() <= 0;
-}
-
-//Private:
+//Internal Getters
 std::string Database::getName(const unsigned int Index, const bool isFirstname)
 {
 	if (m_records.empty())
@@ -171,4 +162,5 @@ std::string Database::getName(const unsigned int Index, const bool isFirstname)
 	return "";
 }
 
+//Internal Setters
 void Database::setId(const unsigned int index) { m_records.at(index).ID = index; }

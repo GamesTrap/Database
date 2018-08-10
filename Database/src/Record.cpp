@@ -1,5 +1,6 @@
 #include "Record.h"
 
+//Constructors
 Record::Record()
 	: ID(0), Firstname{""}, Lastname{""} {}
 

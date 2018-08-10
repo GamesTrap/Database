@@ -29,6 +29,11 @@ private:
 	void importFileToDatabase();
 	bool databaseIsEmpty() const;
 
+	//Utility Functions
+	static void clearScreen();
+	static void continueScreen();
+	bool confirmScreen() const;
+
 	//Getters
 	std::string getNameFromUser() const;
 	int getIndexFromUser() const;
@@ -42,11 +47,6 @@ private:
 	void addRecordToTableByRecord(Record& record);
 	void addRecordToTableByIndex(unsigned int index);
 	void exportTableToFile() const;
-
-	//Utility Functions
-	static void clearScreen();
-	static void continueScreen();
-	bool confirmScreen() const;
 
 	TextTable m_table;
 };

@@ -1,7 +1,6 @@
 #include "DatabaseInterface.h"
 
 #include <iostream>
-#include <cctype>
 #include <fstream>
 
 DatabaseInterface::DatabaseInterface() { displayMenu(); }
@@ -14,11 +13,11 @@ void DatabaseInterface::displayMenu()
 	{
 		clearScreen();
 
-		std::cout << "1 - Add Record" << '\n'
+		std::cout << "0 - Quit" << '\n'
+		        << "1 - Add Record" << '\n'
 				<< "2 - Show Record(s)" << '\n'
 				<< "3 - Update Record" << '\n'
-				<< "4 - Settings" << '\n'
-				<< "5 - Quit" << '\n'
+				<< "4 - Settings" << '\n'				
 				<< "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
@@ -29,27 +28,28 @@ void DatabaseInterface::displayMenu()
 
 		switch (menuStr.at(0))
 		{
+		case 'x':
+			[[fallthrough]];
+		case '0':
+		{
+			const bool close = confirmScreen();
+			if (close)
+				exit(0);
+			break;
+		}
 		case '1':
 			addRecordFromUser();
 			break;
 		case '2':
-			displayShowMenu();
+			if(!databaseIsEmpty())
+				displayShowMenu();
 			break;
 		case '3':
 			displayUpdateMenu();
 			break;
 		case '4':
 			displaySettingsMenu();
-			break;
-		case 'x':
-			[[fallthrough]];
-		case '5':
-			{
-				const bool close = confirmScreen();
-				if (close)
-					exit(0);
-				break;
-			}
+			break;		
 
 		default:
 			;
@@ -65,6 +65,9 @@ void DatabaseInterface::displayUpdateMenu()
 	std::cout << "Please enter a Database ID: ";
 	const int index = getIndexFromUser();
 
+	if (index == -1)
+		return;
+
 	while (true)
 	{
 		if (!getTableWithRecord(m_table, index))
@@ -74,10 +77,10 @@ void DatabaseInterface::displayUpdateMenu()
 
 		std::cout << '\n' << m_table << '\n';
 
-		std::cout << "1 - Change Firstname" << '\n'
+		std::cout << "0 - Main Menu" << '\n'
+		        << "1 - Change Firstname" << '\n'
 				<< "2 - Change Lastname" << '\n'
-				<< "3 - Delete Record" << '\n'
-				<< "4 - Main Menu" << '\n'
+				<< "3 - Delete Record" << '\n'				
 				<< "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
@@ -88,6 +91,10 @@ void DatabaseInterface::displayUpdateMenu()
 
 		switch (menuStr.at(0))
 		{
+		case 'x':
+			[[fallthrough]];
+		case '0':
+			return;
 		case '1':
 			updateFirstname(index);
 			break;
@@ -96,11 +103,7 @@ void DatabaseInterface::displayUpdateMenu()
 			break;
 		case '3':
 			removeRecordFromUser(index);
-			break;
-		case 'x':
-			[[fallthrough]];
-		case '4':
-			return;
+			break;		
 
 		default:
 			;
@@ -116,9 +119,9 @@ void DatabaseInterface::displayShowMenu()
 	{
 		clearScreen();
 
-		std::cout << "1 - All" << '\n'
-				<< "2 - By ID" << '\n'
-				<< "3 - Main Menu" << '\n'
+		std::cout << "0 - Main Menu" << '\n'
+		        << "1 - All" << '\n'
+				<< "2 - By ID" << '\n'				
 				<< "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
@@ -129,6 +132,10 @@ void DatabaseInterface::displayShowMenu()
 
 		switch (menuStr.at(0))
 		{
+		case 'x':
+			[[fallthrough]];
+		case '0':
+			return;
 		case '1':
 			clearScreen();
 			getNumberOfRecords();
@@ -137,11 +144,7 @@ void DatabaseInterface::displayShowMenu()
 			break;
 		case '2':
 			showRecordByIndexFromUser();
-			break;
-		case 'x':
-			[[fallthrough]];
-		case '3':
-			return;
+			break;		
 
 		default:
 			;
@@ -151,64 +154,51 @@ void DatabaseInterface::displayShowMenu()
 
 void DatabaseInterface::displaySettingsMenu()
 {
-	int menu;
 	std::string menuStr;
 
 	while (true)
 	{
 		clearScreen();
 
-		std::cout << "1 - Export" << '\n'
+		std::cout << "0 - Main Menu" << '\n'
+			<< "1 - Export" << '\n'
 			<< "2 - Import" << '\n'
 		    << "3 - Clear Database" << '\n'
-			<< "4 - Main Menu" << '\n'
 			<< "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
 		if (menuStr.length() > 1)
-			menu = -1;
-		else if (menuStr == "x" || menuStr == "X")
-			return;
-		else
-		{
-			try { menu = std::stoi(menuStr); }
-			catch (...) { menu = -1; }
-		}
+			menuStr = 'y';
+		else if (menuStr.empty())
+			menuStr = 'y';
 
-		switch (menu)
+		switch (menuStr.at(0))
 		{
-		case 1:
-			if(getNextId() > 0)
-			    displayExportMenu();
-			else
-			{
-				clearScreen();
-				std::cout << '\n' << "Database is empty!" << '\n' << '\n';
-				continueScreen();				
-			}
+		case 'x':
+			[[fallthrough]];
+		case '0':
+			return;
+		case '1':
+			if (!databaseIsEmpty())
+				displayExportMenu();
 			break;
-		case 2:
-			if (getNextId() > 0)
+		case '2':
+			if (isDatabaseEmpty())
 				displayImportMenu();
 			else
 			{
 				if (!confirmScreen())
-					return;
+					break;
 				clearScreen();
 				importFileToDatabase();
 				continueScreen();
 			}
 			break;
-		case 3:
+		case '3':
 			if(!confirmScreen())
 				break;
-
 			clearRecords();
 			break;
-		case 'x':
-			[[fallthrough]];
-		case 4:
-			return;
 
 		default:
 			;
@@ -218,46 +208,40 @@ void DatabaseInterface::displaySettingsMenu()
 
 void DatabaseInterface::displayExportMenu()
 {
-	int menu;
 	std::string menuStr;
 
 	while (true)
 	{
 		clearScreen();
 
-		std::cout << "1 - Export Table" << '\n'
-			      << "2 - Export Database" << '\n'
-			      << "3 - Main Menu" << '\n'
+		std::cout << "0 - Main Menu" << '\n'
+		          << "1 - Export Table" << '\n'
+			      << "2 - Export Database" << '\n'			      
 			      << "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
 		if (menuStr.length() > 1)
-			menu = -1;
-		else if (menuStr == "x" || menuStr == "X")
-			return;
-		else
-		{
-			try { menu = std::stoi(menuStr); }
-			catch (...) { menu = -1; }
-		}
+			menuStr = 'y';
+		else if (menuStr.empty())
+			menuStr = 'y';
 
-		switch (menu)
+		switch (menuStr.at(0))
 		{
-		case 1:
+		case 'x':
+			[[fallthrough]];
+		case '0':
+			return;
+		case '1':
 			clearScreen();
 			showAllRecords();
 			exportTableToFile();
 			continueScreen();
 			break;
-		case 2:
+		case '2':
 			clearScreen();
 			exportDatabaseToFile();
 			continueScreen();
-			break;
-		case 'x':
-			[[fallthrough]];
-		case 3:
-			return;
+			break;		
 
 		default:
 			;
@@ -267,32 +251,30 @@ void DatabaseInterface::displayExportMenu()
 
 void DatabaseInterface::displayImportMenu()
 {
-	int menu;
 	std::string menuStr;
 
 	while (true)
 	{
 		clearScreen();
 
-		std::cout << "1 - Overwrite All" << '\n'
-			<< "2 - Add to existing" << '\n'
-			<< "3 - Main Menu" << '\n'
+		std::cout << "0 - Main Menu" << '\n'
+		    << "1 - Overwrite All" << '\n'
+			<< "2 - Add to existing" << '\n'			
 			<< "Enter a number and press enter: ";
 
 		std::getline(std::cin, menuStr);
 		if (menuStr.length() > 1)
-			menu = -1;
-		else if (menuStr == "x" || menuStr == "X")
-			return;
-		else
-		{
-			try { menu = std::stoi(menuStr); }
-			catch (...) { menu = -1; }
-		}
+			menuStr = 'y';
+		else if (menuStr.empty())
+			menuStr = 'y';
 
-		switch (menu)
+		switch (menuStr.at(0))
 		{
-		case 1:
+		case 'x':
+			[[fallthrough]];
+		case '0':
+			return;
+		case '1':
 			if (!confirmScreen())
 				break;
 
@@ -301,18 +283,14 @@ void DatabaseInterface::displayImportMenu()
 			importFileToDatabase();
 			continueScreen();
 			break;
-		case 2:
+		case '2':
 			if (!confirmScreen())
 				break;
 
 			clearScreen();
 			importFileToDatabase();
 			continueScreen();
-			break;
-		case 'x':
-			[[fallthrough]];
-		case 3:
-			return;
+			break;		
 
 		default:
 			;
@@ -436,7 +414,7 @@ void DatabaseInterface::exportDatabaseToFile()
 		return;
 	}
 
-	output << toString();
+	output << exporrtDatabaseAsString();
 
 	output.close();
 
@@ -483,6 +461,19 @@ void DatabaseInterface::importFileToDatabase()
 	}
 }
 
+bool DatabaseInterface::databaseIsEmpty() const
+{
+	if(isDatabaseEmpty())
+	{
+		clearScreen();
+		std::cout << "Database is empty!" << '\n' << '\n';
+		continueScreen();
+		return true;
+	}
+
+	return false;
+}
+
 std::string DatabaseInterface::getNameFromUser() const
 {
 	std::string temp;
@@ -490,7 +481,12 @@ std::string DatabaseInterface::getNameFromUser() const
 	std::cin.clear();
 	std::getline(std::cin, temp);
 
-	validateName(temp);
+	while(!validateName(temp))
+	{
+		std::cout << '\n' << "Wrong Input!" << '\n' << "Please try again: ";
+		std::cin.clear();
+		std::getline(std::cin, temp);
+	}
 
 	return temp;
 }
@@ -509,7 +505,18 @@ int DatabaseInterface::getIndexFromUser() const
 		catch (...) { index = -1; }
 	}
 
-	validateIndex(index);
+	while (!validateIndex(index))
+	{
+		if (idStr == "x" || idStr == "X")
+		{
+			index = -1;
+			break;
+		}
+
+		std::cout << '\n' << "Invalid Input." << '\n'
+			<< "Please try again or press 'x' to cancel: ";
+		std::getline(std::cin, idStr);
+	}
 
 	return index;
 }
@@ -550,94 +557,17 @@ std::string DatabaseInterface::getFilenameFromUser() const
 	std::cin.clear();
 	std::getline(std::cin, filename);
 
-	validateFilename(filename);
+	while (!validateFilename(filename)) //Handle Wrong Input
+	{
+		std::cout << '\n' << "Wrong Input!" << '\n' << "Please try again: ";
+		std::cin.clear();
+		std::getline(std::cin, filename);
+	}
 
 	return filename;
 }
 
-void DatabaseInterface::validateName(std::string& name) const
-{
-	bool isCorrect = false; //Default Wrong Input
 
-	do
-	{
-		if (name.empty())
-			isCorrect = false; //Wrong Input
-		else if (name.at(0) == ' ')
-			isCorrect = false; //Wrong Input
-		else if (name.at(name.size() - 1) == ' ')
-			isCorrect = false; //Wront Input
-		else
-		{
-			for (auto& i : name)
-			{
-				if (!std::isalpha(i) || std::isdigit(i))
-					isCorrect = std::isspace(i) != 0; //If i is ' ' return true else false
-				else if (std::isalpha(i))
-					//Correct input
-					isCorrect = true;
-
-				if (!isCorrect)
-					break; //Wrong Input
-			}
-		}
-
-		if (!isCorrect) //Handle Wrong Input
-		{
-			std::cout << '\n' << "Wrong Input!" << '\n' << "Please try again: ";
-			std::cin.clear();
-			std::getline(std::cin, name);
-		}
-	}
-	while (!isCorrect);
-}
-
-void DatabaseInterface::validateIndex(int& index) const
-{
-	std::string temp;
-
-	while (!checkRecordIndex(index))
-	{
-		std::cout << '\n' << "Invalid Input." << '\n'
-				<< "Please try again or press 'x' to cancel: ";
-		std::getline(std::cin, temp);
-
-		if (temp == "x" || temp == "X")
-		{
-			index = -1;
-			break;
-		}
-
-		try { index = std::stoi(temp); }
-		catch (...) { }
-	}
-}
-
-void DatabaseInterface::validateFilename(std::string& filename) const
-{
-	bool isCorrect = false;
-
-	do
-	{
-		if (filename.empty())
-			isCorrect = false; //Wrong Input
-		else if (filename.at(0) == ' ')
-			isCorrect = false; //Wrong Input
-		else if (filename.at(filename.size() - 1) == ' ')
-			isCorrect = false; //Wront Input
-		else
-		{
-			isCorrect = true;
-		}
-
-		if (!isCorrect) //Handle Wrong Input
-		{
-			std::cout << '\n' << "Wrong Input!" << '\n' << "Please try again: ";
-			std::cin.clear();
-			std::getline(std::cin, filename);
-		}
-	} while (!isCorrect);
-}
 
 void DatabaseInterface::initializeTable()
 {

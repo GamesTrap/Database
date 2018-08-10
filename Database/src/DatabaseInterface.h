@@ -27,6 +27,7 @@ private:
 	void updateLastname(int index);
 	void exportDatabaseToFile();
 	void importFileToDatabase();
+	bool databaseIsEmpty() const;
 
 	//Getters
 	std::string getNameFromUser() const;
@@ -34,11 +35,6 @@ private:
 	bool getTableWithRecord(TextTable& table, int index);
 	void getNumberOfRecords() const;
 	std::string getFilenameFromUser() const;
-
-	//Validators
-	void validateName(std::string& name) const;
-	void validateIndex(int& index) const;
-	void validateFilename(std::string& filename) const;
 
 	//Table Functions
 	void initializeTable();

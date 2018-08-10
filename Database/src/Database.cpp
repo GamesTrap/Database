@@ -41,16 +41,16 @@ bool Database::checkRecordIndex(const unsigned int index) const
 	return getNextId() > index;
 }
 
-std::string Database::toString()
+std::string Database::exporrtDatabaseAsString()
 {
 	std::string temp;
 
-	for(unsigned int i = 0; i < m_records.size(); i++)
+	for (unsigned int i = 0; i < m_records.size(); i++)
 	{
 		if (i == 0)
-			temp +=  m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
+			temp += m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
 		else
-		    temp += "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
+			temp += "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
 	}
 
 	return temp;
@@ -60,7 +60,7 @@ bool Database::importDatabase(std::vector<std::string> &CSVs, unsigned int eleme
 {
 	bool isCorrect = true;
 
-	for(unsigned int i = 0; i < elements; i += 2)
+	for (unsigned int i = 0; i < elements; i += 2)
 	{
 		if (CSVs.at(i + 1).empty())
 			isCorrect = false;
@@ -92,10 +92,66 @@ bool Database::importDatabase(std::vector<std::string> &CSVs, unsigned int eleme
 	return isCorrect;
 }
 
+bool Database::validateName(std::string& name)
+{
+	bool isCorrect = true;
+
+	if (name.empty())
+		isCorrect = false; //Wrong Input
+	else if (name.at(0) == ' ')
+		isCorrect = false; //Wrong Input
+	else if (name.at(name.size() - 1) == ' ')
+		isCorrect = false; //Wront Input
+	else
+	{
+		for (auto& i : name)
+		{
+			if (!std::isalpha(i) || std::isdigit(i))
+				isCorrect = std::isspace(i) != 0; //If i is ' ' return true else false
+			else if (std::isalpha(i))
+				//Correct input
+				isCorrect = true;
+
+			if (!isCorrect)
+				break; //Wrong Input
+		}
+	}
+
+	return isCorrect;
+}
+
+bool Database::validateIndex(int& index) const
+{
+	return checkRecordIndex(index);
+}
+
+bool Database::validateFilename(std::string& filename)
+{
+	bool isCorrect = true;
+
+	if (filename.empty())
+		isCorrect = false; //Wrong Input
+	else if (filename.at(0) == ' ')
+		isCorrect = false; //Wrong Input
+	else if (filename.at(filename.size() - 1) == ' ')
+		isCorrect = false; //Wront Input
+	else
+	{
+		isCorrect = true;
+	}
+
+	return isCorrect;
+}
+
 
 void Database::clearRecords()
 {
 	m_records.clear();
+}
+
+bool Database::isDatabaseEmpty() const
+{
+	return getNextId() <= 0;
 }
 
 //Private:

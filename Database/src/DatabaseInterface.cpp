@@ -195,11 +195,14 @@ void DatabaseInterface::displaySettingsMenu()
 				if (!confirmScreen())
 					return;
 				clearScreen();
-				importFileToDatabaseOverwrite();
+				importFileToDatabase();
 				continueScreen();
 			}
 			break;
 		case 3:
+			if(!confirmScreen())
+				break;
+
 			clearRecords();
 			break;
 		case 'x':
@@ -294,7 +297,8 @@ void DatabaseInterface::displayImportMenu()
 				break;
 
 			clearScreen();
-			importFileToDatabaseOverwrite();
+			clearRecords();
+			importFileToDatabase();
 			continueScreen();
 			break;
 		case 2:
@@ -302,9 +306,7 @@ void DatabaseInterface::displayImportMenu()
 				break;
 
 			clearScreen();
-			
-
-
+			importFileToDatabase();
 			continueScreen();
 			break;
 		case 'x':
@@ -351,7 +353,7 @@ void DatabaseInterface::removeRecordFromUser(const int index)
 
 	removeRecord(index);
 
-	std::cout << "Database Record deleted!" << '\n';
+	std::cout << "Database Record deleted!" << '\n' << '\n';
 
 	continueScreen();
 
@@ -441,11 +443,11 @@ void DatabaseInterface::exportDatabaseToFile()
 	std::cout << '\n' << "Successfully exported Database!" << '\n' << '\n';
 }
 
-void DatabaseInterface::importFileToDatabaseOverwrite()
+void DatabaseInterface::importFileToDatabase()
 {
 	std::string temp;
 	std::vector<std::string> CSVs;
-	unsigned int lines = 0;
+	unsigned int elements = 0;
 
 	std::cout << "Please enter a filename: ";
 
@@ -468,16 +470,16 @@ void DatabaseInterface::importFileToDatabaseOverwrite()
 			temp.pop_back();
 
 		CSVs.push_back(temp);
-		lines++;
+		elements++;
 	}
-	lines--;
+	elements--;
 
-	if (!importOverwrite(CSVs, lines))
+	if (!importDatabase(CSVs, elements))
 		std::cout << '\n' << "An error has occured!" << '\n' << '\n';
 	else
 	{
 		showAllRecords();
-		std::cout << '\n' << "Successfully imported Database!" << '\n' << '\n';		
+		std::cout << "Successfully imported Database!" << '\n' << '\n';		
 	}
 }
 

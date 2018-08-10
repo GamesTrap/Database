@@ -19,7 +19,7 @@ public:
 
 	std::string toString();
 
-	bool importOverwrite(std::vector<std::string> &CSVs, unsigned int lines);
+	bool importDatabase(std::vector<std::string> &CSVs, unsigned int lines);
 
 	void clearRecords();
 

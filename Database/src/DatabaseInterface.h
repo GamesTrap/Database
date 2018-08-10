@@ -26,7 +26,7 @@ private:
 	void updateFirstname(int index);
 	void updateLastname(int index);
 	void exportDatabaseToFile();
-	void importFileToDatabaseOverwrite();
+	void importFileToDatabase();
 
 	//Getters
 	std::string getNameFromUser() const;

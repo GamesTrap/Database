@@ -48,69 +48,48 @@ std::string Database::toString()
 	for(unsigned int i = 0; i < m_records.size(); i++)
 	{
 		if (i == 0)
-			temp += std::to_string(m_records.at(i).ID) + "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
+			temp +=  m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
 		else
-		    temp += "," + std::to_string(m_records.at(i).ID) + "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
+		    temp += "," + m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
 	}
 
 	return temp;
 }
 
-bool Database::importOverwrite(std::vector<std::string> &CSVs, unsigned int lines)
+bool Database::importDatabase(std::vector<std::string> &CSVs, unsigned int elements)
 {
-	unsigned int id;
+	bool isCorrect = true;
 
-	clearRecords();
-
-	for(unsigned int i = 0; i < lines; i++)
+	for(unsigned int i = 0; i < elements; i += 2)
 	{
-		try
-		{
-			id = std::stoi(CSVs.at(i));
-		}
-		catch(...)
-		{
-			return false;
-		}
-
 		if (CSVs.at(i + 1).empty())
-			return false;
+			isCorrect = false;
 		if (CSVs.at(i + 1).at(0) == ' ')
-			return false;
+			isCorrect = false;
 		if (CSVs.at(i + 1).at(CSVs.at(i + 1).size() - 1) == ' ')
-			return false;
+			isCorrect = false;
 		for (auto& ch : CSVs.at(i + 1))
-		{
 			if (!std::isalpha(ch) || std::isdigit(ch))
-				if (ch != ' ')
-					return false;
-		}
+				isCorrect = ch != ' ';
 
 		std::string firstname = CSVs.at(i + 1);
 
 		if (CSVs.at(i + 2).empty())
-			return false;
+			isCorrect = false;
 		if (CSVs.at(i + 2).at(0) == ' ')
-			return false;
+			isCorrect = false;
 		if (CSVs.at(i + 2).at(CSVs.at(i + 2).size() - 1) == ' ')
-			return false;
+			isCorrect = false;
 		for (auto& ch : CSVs.at(i + 2))
-		{
 			if (!std::isalpha(ch) || std::isdigit(ch))
-			{
-				if (ch != ' ')
-					return false;			
-			}
-		}
+				isCorrect = ch != ' ';
 
 		std::string lastname = CSVs.at(i + 2);
 
-		m_records.emplace_back(id, firstname, lastname);
-
-		i += 2;
+		m_records.emplace_back(getNextId(), firstname, lastname);
 	}
 
-	return true;
+	return isCorrect;
 }
 
 

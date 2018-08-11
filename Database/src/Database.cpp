@@ -96,7 +96,9 @@ bool Database::validateName(std::string& name)
 	else if (name.at(0) == ' ')
 		isCorrect = false; //Wrong Input
 	else if (name.at(name.size() - 1) == ' ')
-		isCorrect = false; //Wront Input
+		isCorrect = false; //Wrong Input
+	else if (name.size() > 50)
+		isCorrect = false;
 	else
 	{
 		for (auto& i : name)

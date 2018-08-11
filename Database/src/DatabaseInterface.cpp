@@ -17,6 +17,7 @@ DatabaseInterface::DatabaseInterface()
 {
 #ifdef WIN
 	SetConsoleTitle("Database");
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 2);
 	ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
 #endif
 	displayMenu();

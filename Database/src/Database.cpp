@@ -43,12 +43,12 @@ bool Database::importDatabase(std::vector<std::string> &CSVs, const unsigned int
 
 	for (unsigned int i = 0; i < elements; i += 2)
 	{
-		std::string firstname = CSVs.at(i + 1);
+		std::string firstname = CSVs.at(i);
 
 		if (!validateName(firstname))
 			isCorrect = false;
 
-		std::string lastname = CSVs.at(i + 2);
+		std::string lastname = CSVs.at(i + 1);
 
 		if (!validateName(lastname))
 			isCorrect = false;

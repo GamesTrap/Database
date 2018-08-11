@@ -3,9 +3,24 @@
 #include <iostream>
 #include <fstream>
 
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+    #define WIN
+#endif
+
+#ifdef WIN
+    #include <Windows.h>
+#endif
+
 ///Public:
 //Constructor
-DatabaseInterface::DatabaseInterface() { displayMenu(); }
+DatabaseInterface::DatabaseInterface()
+{
+#ifdef WIN
+	SetConsoleTitle("Database");
+	ShowWindow(GetConsoleWindow(), SW_MAXIMIZE);
+#endif
+	displayMenu();
+}
 
 //Menus
 void DatabaseInterface::displayMenu()
@@ -199,6 +214,7 @@ void DatabaseInterface::displaySettingsMenu()
 				break;
 			if (!confirmScreen())
 				break;
+			clearScreen();
 			clearDatabase();
 			continueScreen();
 			break;
@@ -471,11 +487,18 @@ void DatabaseInterface::clearDatabase()
 {
 	clearRecords();
 
-	std::cout << '\n' << "Database cleared successfully!" << '\n' << '\n';
+	std::cout << '\n' << "Successfully cleared Database!" << '\n' << '\n';
 }
 
 //Utility Functions
-void DatabaseInterface::clearScreen() { std::cout << std::string(100, '\n'); }
+void DatabaseInterface::clearScreen()
+{
+#ifdef WIN
+	system("cls");
+#else
+	std::cout << std::string(100, '\n');
+#endif
+}
 void DatabaseInterface::continueScreen()
 {
 	std::cout << "Press Enter to continue . . . ";

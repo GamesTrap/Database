@@ -386,7 +386,7 @@ void DatabaseInterface::showAllRecords()
 	clearTable();
 	initializeTable();
 
-	for (unsigned int i = 0; i < getNextId(); i++) { addRecordToTableByIndex(i); }
+	for (unsigned int i = 0; i < getNextId(); ++i) { addRecordToTableByIndex(i); }
 
 	std::cout << '\n' << m_table << '\n';
 }

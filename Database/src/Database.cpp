@@ -15,7 +15,7 @@ bool Database::removeRecord(const unsigned int index)
 
 	m_records.erase(m_records.begin() + index);
 
-	for (unsigned int i = index; i < getNextId(); i++) { setId(i); }
+	for (unsigned int i = index; i < getNextId(); ++i) { setId(i); }
 
 	return true;
 }
@@ -27,7 +27,7 @@ std::string Database::exportDatabaseAsString()
 {
 	std::string temp;
 
-	for (unsigned int i = 0; i < m_records.size(); i++)
+	for (unsigned int i = 0; i < m_records.size(); ++i)
 	{
 		if (i == 0)
 			temp += m_records.at(i).Firstname + "," + m_records.at(i).Lastname + '\n';
